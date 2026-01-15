@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)
 
 **Spec-Forge API** is an engine designed to transform raw data sources like **JSON examples** and **JSON schemas** into
-a unified **Intermediate Representation (IR)**. This IR is then used to generate clean, production-ready **Java** and 
+a unified **Intermediate Representation (IR)**. This IR is then used to generate clean, production-ready **Java** and
 **TypeScript** codebases.
 
 ---
@@ -116,3 +116,35 @@ This project is licensed under the **GNU Affero General Public License v3.0 (AGP
 
 If you require **special licensing conditions** (e.g. commercial use, closed-source distribution, or other exceptions),
 **you must contact the project author directly** to discuss alternative licensing options.
+
+## 🤝 Contributing
+
+Contributions are welcome! To keep the codebase clean and the history readable, please follow these steps:
+
+### 1. The Workflow
+
+1. Fork the project and create your feature branch:
+   ```bash
+   git checkout -b feat/amazing-feature
+   ```
+2. Code your changes.
+3. Format your code (see below).
+4. Verify everything passes:
+   ```bash
+   mvn clean verify
+   ```
+5. Submit a Pull Request.
+
+### 2. Code Style (Linter)
+
+We use **Palantir Java Format** via the **Spotless** plugin.  
+The build will fail if the code is not formatted correctly.
+
+To fix formatting automatically, run this command from the project root before you commit:
+
+```bash
+mvn spotless:apply
+```
+
+IDE Setup: If you use IntelliJ, install the **Palantir Java Format** plugin and enable **Reformat on Save** to handle
+this automatically.
