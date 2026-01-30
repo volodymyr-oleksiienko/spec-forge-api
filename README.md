@@ -111,6 +111,16 @@ Spec-Forge is built as a Maven Multi-Module project to enforce architectural bou
 
 ---
 
+## 🔄 CI / CD
+
+- **CI**: GitHub Actions on every push
+- **CD (prod)**: triggered by `v*` git tags or manual run
+- **Image**: `ghcr.io/volodymyr-oleksiienko/spec-forge-api`
+- **Deploy**: Docker Compose on production server
+- **Health check**: `/actuator/health`
+
+---
+
 ## ⚖️ License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
