@@ -34,9 +34,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build Docker Image with Buildpacks
+      - name: Build and Install Dependencies
+        run: mvn clean install -DskipTests
+
+      - name: Build Docker Image
         run: |
-          mvn spring-boot:build-image \
+          mvn spring-boot:build-image -pl spec-forge-api-infra \
             -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
             -Dspring-boot.build-image.tags=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
