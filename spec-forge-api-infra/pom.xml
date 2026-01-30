@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.v-oleksiienko</groupId>
         <artifactId>spec-forge-api</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
     </parent>
 
     <artifactId>spec-forge-api-infra</artifactId>
@@ -55,14 +55,12 @@
                 <configuration>
                     <image>
                         <name>ghcr.io/volodymyr-oleksiienko/spec-forge-api:latest</name>
-                        <builder>paketobuildpacks/builder:base</builder>
                         <buildpacks>
-                            <buildpack>gcr.io/paketo-buildpacks/java</buildpack>
-                            <buildpack>gcr.io/paketo-buildpacks/health-checker</buildpack>
+                            <buildpack>urn:cnb:builder:paketo-buildpacks/java</buildpack>
+                            <buildpack>docker.io/paketobuildpacks/health-checker:latest</buildpack>
                         </buildpacks>
                         <env>
-                            <THC_PORT>8080</THC_PORT>
-                            <THC_PATH>/actuator/health</THC_PATH>
+                            <BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
                         </env>
                     </image>
                 </configuration>
