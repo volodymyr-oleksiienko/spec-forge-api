@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.v-oleksiienko</groupId>
         <artifactId>spec-forge-api</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3</version>
     </parent>
 
     <artifactId>spec-forge-api-core</artifactId>
