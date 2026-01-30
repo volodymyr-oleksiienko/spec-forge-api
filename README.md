@@ -2,6 +2,9 @@
 
 ![Status](https://img.shields.io/badge/Status-In_Development-orange?style=for-the-badge)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=volodymyr-oleksiienko_spec-forge-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=volodymyr-oleksiienko_spec-forge-api)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=volodymyr-oleksiienko_spec-forge-api&metric=coverage)](https://sonarcloud.io/component_measures?id=volodymyr-oleksiienko_spec-forge-api&metric=coverage&view=list)
+
 ![Java Version](https://img.shields.io/badge/Java-25+-6DB33F?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4+-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-3.9+-6DB33F?style=for-the-badge&logo=apache-maven&logoColor=white)
@@ -108,6 +111,16 @@ Spec-Forge is built as a Maven Multi-Module project to enforce architectural bou
 
 ---
 
+## 🔄 CI / CD
+
+- **CI**: GitHub Actions on every push
+- **CD (prod)**: triggered by `v*` git tags or manual run
+- **Image**: `ghcr.io/volodymyr-oleksiienko/spec-forge-api`
+- **Deploy**: Docker Compose on production server
+- **Health check**: `/actuator/health`
+
+---
+
 ## ⚖️ License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
@@ -148,3 +161,13 @@ mvn spotless:apply
 
 IDE Setup: If you use IntelliJ, install the **Palantir Java Format** plugin and enable **Reformat on Save** to handle
 this automatically.
+
+### 3. Automated Checks
+
+Every Pull Request triggers a CI pipeline to ensure code integrity:
+
+- **Style Enforcement (All Branches):** The build will fail immediately if code does not adhere to the **Palantir Java
+  Format** (checked via Spotless).
+- **Verification:**
+    - **Main Branch:** Fast-path verification of compilation and unit tests.
+    - **Develop Branch:** Full deep-scan including **SonarCloud** static analysis and **JaCoCo** coverage reports.
