@@ -10,7 +10,7 @@ services:
       - THC_PATH=/actuator/health/liveness
       - THC_PORT=8080
       - BPL_JVM_THREAD_COUNT=50
-      - JAVA_TOOL_OPTIONS="-Xmx300m -Xss768k -XX:ReservedCodeCacheSize=48M"
+      - JAVA_TOOL_OPTIONS=-Xmx300m -Xss768k -XX:ReservedCodeCacheSize=48M
       - SERVER_TOMCAT_THREADS_MAX=50
       - SERVER_TOMCAT_THREADS_MIN_SPARE=5
       - SERVER_TOMCAT_CONNECTION_TIMEOUT=20000
