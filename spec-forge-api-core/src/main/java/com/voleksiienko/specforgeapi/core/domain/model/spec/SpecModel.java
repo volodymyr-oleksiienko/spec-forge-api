@@ -10,11 +10,11 @@ import java.util.Objects;
 public final class SpecModel {
 
     private final WrapperType wrapperType;
-    private final List<SpecProperty> specProperties;
+    private final List<SpecProperty> properties;
 
     private SpecModel(Builder builder) {
         this.wrapperType = builder.wrapperType;
-        this.specProperties = builder.specProperties;
+        this.properties = builder.properties;
     }
 
     public static Builder builder() {
@@ -26,7 +26,7 @@ public final class SpecModel {
     }
 
     public List<SpecProperty> getProperties() {
-        return specProperties;
+        return properties;
     }
 
     public enum WrapperType {
@@ -37,15 +37,15 @@ public final class SpecModel {
     public static class Builder {
 
         private WrapperType wrapperType;
-        private List<SpecProperty> specProperties;
+        private List<SpecProperty> properties;
 
         public Builder wrapperType(WrapperType wrapperType) {
             this.wrapperType = wrapperType;
             return this;
         }
 
-        public Builder specProperties(List<SpecProperty> specProperties) {
-            this.specProperties = specProperties;
+        public Builder properties(List<SpecProperty> properties) {
+            this.properties = properties;
             return this;
         }
 
@@ -53,11 +53,11 @@ public final class SpecModel {
             if (Objects.isNull(wrapperType)) {
                 throw new SpecModelValidationException("wrapperType is required");
             }
-            if (Asserts.isEmpty(specProperties)) {
+            if (Asserts.isEmpty(properties)) {
                 throw new SpecModelValidationException("SpecModel must contain at least one node");
             }
-            ensurePropertiesUniqueness(specProperties, "SpecModel");
-            specProperties = List.copyOf(specProperties);
+            ensurePropertiesUniqueness(properties, "SpecModel");
+            properties = List.copyOf(properties);
             return new SpecModel(this);
         }
     }

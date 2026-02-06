@@ -38,7 +38,7 @@ public class JsonSchemaToSpecModelAdapter implements JsonSchemaToSpecModelPort {
             JsonNode rootNode = referenceResolver.resolveRefs(JSON_MAPPER.readTree(jsonSchema));
             SpecModel specModel = SpecModel.builder()
                     .wrapperType(parser.getWrapperType(rootNode))
-                    .specProperties(mapChildren(rootNode, parsingContext))
+                    .properties(mapChildren(rootNode, parsingContext))
                     .build();
             return new ConversionResult(specModel, parsingContext.getWarnings());
         } catch (ConversionException e) {

@@ -20,12 +20,12 @@ class SpecModelTest {
 
         var model = SpecModel.builder()
                 .wrapperType(SpecModel.WrapperType.OBJECT)
-                .specProperties(List.of(prop))
+                .properties(List.of(prop))
                 .build();
 
         assertThat(model.getWrapperType()).isEqualTo(SpecModel.WrapperType.OBJECT);
         assertThat(model.getProperties()).hasSize(1);
-        assertThat(model.getProperties().get(0)).isEqualTo(prop);
+        assertThat(model.getProperties().getFirst()).isEqualTo(prop);
     }
 
     @Test
@@ -37,7 +37,7 @@ class SpecModelTest {
 
         var model = SpecModel.builder()
                 .wrapperType(SpecModel.WrapperType.LIST)
-                .specProperties(List.of(prop))
+                .properties(List.of(prop))
                 .build();
 
         assertThat(model.getWrapperType()).isEqualTo(SpecModel.WrapperType.LIST);
@@ -46,7 +46,7 @@ class SpecModelTest {
     @Test
     void shouldThrowExceptionWhenWrapperTypeIsMissing() {
         var prop = SpecProperty.builder().name("f").type(new BooleanSpecType()).build();
-        var builder = SpecModel.builder().specProperties(List.of(prop));
+        var builder = SpecModel.builder().properties(List.of(prop));
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
@@ -56,7 +56,7 @@ class SpecModelTest {
     @Test
     void shouldThrowExceptionWhenPropertiesListIsEmpty() {
         var builder =
-                SpecModel.builder().wrapperType(SpecModel.WrapperType.OBJECT).specProperties(List.of());
+                SpecModel.builder().wrapperType(SpecModel.WrapperType.OBJECT).properties(List.of());
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
@@ -75,7 +75,7 @@ class SpecModelTest {
                 .build();
 
         var builder =
-                SpecModel.builder().wrapperType(SpecModel.WrapperType.OBJECT).specProperties(List.of(p1, p2));
+                SpecModel.builder().wrapperType(SpecModel.WrapperType.OBJECT).properties(List.of(p1, p2));
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)

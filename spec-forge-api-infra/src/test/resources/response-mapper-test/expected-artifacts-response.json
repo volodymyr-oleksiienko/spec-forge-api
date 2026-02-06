@@ -1,0 +1,126 @@
+{
+  "specModel": {
+    "wrapperType": "OBJECT",
+    "properties": [
+      {
+        "name": "is_active",
+        "type": {
+          "type": "BOOLEAN"
+        },
+        "required": true,
+        "description": "Basic Boolean"
+      },
+      {
+        "name": "retry_count",
+        "type": {
+          "type": "INTEGER",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "required": true,
+        "description": "Basic Integer"
+      },
+      {
+        "name": "score",
+        "type": {
+          "type": "DOUBLE",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "required": false,
+        "description": "Basic Double"
+      },
+      {
+        "name": "money",
+        "type": {
+          "type": "DECIMAL",
+          "minimum": 0,
+          "maximum": 100000,
+          "scale": 2
+        },
+        "required": false,
+        "description": "Basic Decimal"
+      },
+      {
+        "name": "dob",
+        "type": {
+          "type": "DATE",
+          "format": "yyyy-MM-dd"
+        },
+        "required": false,
+        "description": "Date Type"
+      },
+      {
+        "name": "meeting_time",
+        "type": {
+          "type": "TIME",
+          "format": "HH:mm"
+        },
+        "required": false,
+        "description": "Time Type"
+      },
+      {
+        "name": "meta_data",
+        "type": {
+          "type": "OBJECT"
+        },
+        "required": false,
+        "description": "Object Type",
+        "children": [
+          {
+            "name": "created_at",
+            "type": {
+              "type": "DATE_TIME",
+              "format": "yyyy-MM-dd HH:mm"
+            },
+            "required": false,
+            "description": "DateTime Type"
+          }
+        ]
+      },
+      {
+        "name": "roles",
+        "type": {
+          "type": "LIST",
+          "minItems": 0,
+          "maxItems": 10,
+          "valueType": {
+            "type": "ENUM",
+            "values": [
+              "ADMIN",
+              "USER"
+            ]
+          }
+        },
+        "required": false,
+        "description": "List Type"
+      },
+      {
+        "name": "attributes",
+        "type": {
+          "type": "MAP",
+          "keyType": {
+            "type": "STRING",
+            "minLength": 3,
+            "maxLength": 20,
+            "pattern": "[a-z]+"
+          },
+          "valueType": {
+            "type": "STRING",
+            "minLength": 5,
+            "maxLength": 50,
+            "format": "EMAIL"
+          }
+        },
+        "required": false,
+        "description": "Map Type"
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "devMessage": "Something happened",
+      "errorCode": "SPEC_VALIDATION_FAILED"
+    }
+  ]
+}
