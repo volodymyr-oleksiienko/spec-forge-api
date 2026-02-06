@@ -22,6 +22,11 @@ a unified **Intermediate Representation (IR)**. This IR is then used to generate
 
 This project is currently under **active development**.
 
+- ✅ Core Domain Logic (IR & Transformations)
+- ✅ REST API Adapters (Schema & Sample generation)
+- 🚧 Json Sample/Json Schema Generators (In Progress)
+- 🚧 Java/TypeScript Code Generators (In Progress)
+
 ---
 
 ## 🚀 Quick Start
@@ -56,6 +61,55 @@ Once the application has started, the API will be available at:
 
 Application health check available at:
 > `http://localhost:8080/actuator/health`
+
+## 📡 API Reference
+
+### 1. Generate SpecModel (IR) from JSON Schema
+
+**Endpoint:** `POST /artifacts/from-json-schema`  
+**Content-Type:** `application/json`
+
+**Request Body:**
+
+```json
+{
+  "content": "{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}}"
+}
+```
+
+### 2. Generate SpecModel (IR) from JSON Sample
+
+**Endpoint:** `POST /artifacts/from-json-sample`  
+**Content-Type:** `application/json`
+
+**Request Body:**
+
+```json
+{
+  "content": "{\"id\": 123}"
+}
+```
+
+### Response (Success 200 OK)
+
+Returns the standardized SpecModel and any warnings.
+
+```json
+{
+  "specModel": {
+    "wrapperType": "OBJECT",
+    "properties": [
+      {
+        "name": "id",
+        "type": {
+          "type": "INTEGER"
+        },
+        "required": false
+      }
+    ]
+  }
+}
+```
 
 ---
 
