@@ -45,8 +45,9 @@ class IntegerSpecTypeTest {
 
     @Test
     void shouldThrowIfMinimumGreaterThanMaximum() {
-        assertThatThrownBy(
-                        () -> IntegerSpecType.builder().minimum(10L).maximum(5L).build())
+        IntegerSpecType.Builder builder = IntegerSpecType.builder().minimum(10L).maximum(5L);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Minimum [10] cannot be greater than Maximum [5]");
     }

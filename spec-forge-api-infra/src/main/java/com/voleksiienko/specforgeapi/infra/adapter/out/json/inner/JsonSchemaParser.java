@@ -24,7 +24,7 @@ public class JsonSchemaParser {
     public List<ChildDefinition> extractChildren(JsonNode node, ParsingContext parsingContext) {
         if (node.has(JSON_PROPERTIES_FIELD)) {
             return getFromProperties(node);
-        } else if (node.has("items") && node.get("items").has("properties")) {
+        } else if (node.has(JSON_ITEMS_FIELD) && node.get(JSON_ITEMS_FIELD).has(JSON_PROPERTIES_FIELD)) {
             return getFromProperties(node.get(JSON_ITEMS_FIELD));
         } else if (hasComposition(node)) {
             return getFromCompositions(node, parsingContext);
@@ -33,7 +33,7 @@ public class JsonSchemaParser {
     }
 
     private List<ChildDefinition> getFromProperties(JsonNode node) {
-        JsonNode properties = node.get("properties");
+        JsonNode properties = node.get(JSON_PROPERTIES_FIELD);
         Set<String> requiredFields = extractRequiredFields(node);
         List<ChildDefinition> children = new ArrayList<>();
         properties
@@ -54,8 +54,8 @@ public class JsonSchemaParser {
 
     private void processCompositeNode(
             ParsingContext parsingContext, String compositionType, JsonNode childNode, List<ChildDefinition> children) {
-        if (childNode.has("properties")) {
-            childNode.get("properties").properties().forEach(entry -> {
+        if (childNode.has(JSON_PROPERTIES_FIELD)) {
+            childNode.get(JSON_PROPERTIES_FIELD).properties().forEach(entry -> {
                 String propertyName = entry.getKey();
                 boolean isDuplicate = children.stream().anyMatch(c -> c.name().equals(propertyName));
                 if (!isDuplicate) {

@@ -45,8 +45,9 @@ class DoubleSpecTypeTest {
 
     @Test
     void shouldThrowIfMinimumGreaterThanMaximum() {
-        assertThatThrownBy(() ->
-                        DoubleSpecType.builder().minimum(10.5).maximum(10.4).build())
+        DoubleSpecType.Builder builder = DoubleSpecType.builder().minimum(10.5).maximum(10.4);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Minimum [10.5] cannot be greater than Maximum [10.4]");
     }

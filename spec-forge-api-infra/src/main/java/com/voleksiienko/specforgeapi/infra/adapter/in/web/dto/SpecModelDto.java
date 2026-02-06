@@ -77,7 +77,7 @@ public record SpecModelDto(
     }
 
     public record SpecPropertyDto(
-            @NotNull @Pattern(regexp = "^[a-zA-Z0-9_]+$") String name,
+            @NotNull @Pattern(regexp = "^\\w+$") String name,
             @Valid @NotNull SpecTypeDto type,
             @NotNull Boolean required,
             @Valid List<SpecPropertyDto> children,
