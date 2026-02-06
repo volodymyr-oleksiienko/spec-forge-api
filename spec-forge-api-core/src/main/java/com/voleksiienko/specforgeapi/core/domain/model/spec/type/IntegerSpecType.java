@@ -1,0 +1,56 @@
+package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
+
+import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.util.Objects;
+
+public final class IntegerSpecType implements SpecType {
+
+    private final Long minimum;
+    private final Long maximum;
+
+    private IntegerSpecType(Builder builder) {
+        this.minimum = builder.minimum;
+        this.maximum = builder.maximum;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public boolean isObjectStructure() {
+        return false;
+    }
+
+    public Long getMinimum() {
+        return minimum;
+    }
+
+    public Long getMaximum() {
+        return maximum;
+    }
+
+    public static class Builder {
+
+        private Long minimum;
+        private Long maximum;
+
+        public Builder minimum(Long minimum) {
+            this.minimum = minimum;
+            return this;
+        }
+
+        public Builder maximum(Long maximum) {
+            this.maximum = maximum;
+            return this;
+        }
+
+        public IntegerSpecType build() {
+            if (Objects.nonNull(minimum) && Objects.nonNull(maximum) && minimum > maximum) {
+                throw new SpecModelValidationException(
+                        "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
+            }
+            return new IntegerSpecType(this);
+        }
+    }
+}
