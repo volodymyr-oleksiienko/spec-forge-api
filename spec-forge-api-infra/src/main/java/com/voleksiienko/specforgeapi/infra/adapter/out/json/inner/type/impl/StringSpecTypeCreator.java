@@ -1,16 +1,15 @@
 package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.impl;
 
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
+
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.SpecTypeCreator;
-import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
-
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 @Component
 public class StringSpecTypeCreator implements SpecTypeCreator {

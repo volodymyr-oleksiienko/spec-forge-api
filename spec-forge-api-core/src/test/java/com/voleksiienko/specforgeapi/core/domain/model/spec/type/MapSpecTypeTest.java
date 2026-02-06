@@ -1,12 +1,11 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
-import org.junit.jupiter.api.Test;
-
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 class MapSpecTypeTest {
 

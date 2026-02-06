@@ -1,14 +1,13 @@
 package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner;
 
-import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
-import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
-
-import java.util.*;
-import java.util.stream.Stream;
-
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_DUPLICATE;
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED;
+
+import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
+import java.util.*;
+import java.util.stream.Stream;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 @Component
 public class JsonSchemaParser {
