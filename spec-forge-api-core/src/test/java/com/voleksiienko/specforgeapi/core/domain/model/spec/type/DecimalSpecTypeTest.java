@@ -1,11 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
-import java.math.BigDecimal;
-import org.junit.jupiter.api.Test;
 
 class DecimalSpecTypeTest {
 
@@ -40,14 +41,18 @@ class DecimalSpecTypeTest {
 
     @Test
     void shouldThrowWhenScaleIsNegative() {
-        assertThatThrownBy(() -> DecimalSpecType.builder().scale(-1).build())
+        DecimalSpecType.Builder builder = DecimalSpecType.builder().scale(-1);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("Scale [-1] cannot be negative");
     }
 
     @Test
     void shouldThrowWhenScaleExceedsMaxLimit() {
-        assertThatThrownBy(() -> DecimalSpecType.builder().scale(101).build())
+        DecimalSpecType.Builder builder = DecimalSpecType.builder().scale(101);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("Scale [101] exceeds the maximum allowed limit of [100]");
     }
@@ -81,10 +86,10 @@ class DecimalSpecTypeTest {
 
     @Test
     void shouldThrowIfMinimumGreaterThanMaximum() {
-        assertThatThrownBy(() -> DecimalSpecType.builder()
-                        .minimum(new BigDecimal("10.1"))
-                        .maximum(new BigDecimal("10.0"))
-                        .build())
+        DecimalSpecType.Builder builder =
+                DecimalSpecType.builder().minimum(new BigDecimal("10.1")).maximum(new BigDecimal("10.0"));
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Minimum [10.1] cannot be greater than Maximum [10.0]");
     }

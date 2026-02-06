@@ -1,10 +1,10 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DateSpecTypeTest {
 
@@ -17,14 +17,18 @@ class DateSpecTypeTest {
 
     @Test
     void shouldThrowIfFormatIsEmpty() {
-        assertThatThrownBy(() -> DateSpecType.builder().build())
+        DateSpecType.Builder builder = DateSpecType.builder();
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("Date format cannot be empty");
     }
 
     @Test
     void shouldThrowOnInvalidDatePattern() {
-        assertThatThrownBy(() -> DateSpecType.builder().format("invalid-fmt").build())
+        DateSpecType.Builder builder = DateSpecType.builder().format("invalid-fmt");
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Invalid Date format pattern: invalid-fmt");
     }

@@ -1,20 +1,22 @@
 package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.impl;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
-
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.SpecTypeCreator;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
+
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
 
 @Component
 public class StringSpecTypeCreator implements SpecTypeCreator {
 
     private static final Set<String> SUPPORTED_STRING_FORMATS = Set.of("email", "uuid");
+    private static final String JSON_FORMAT_FIELD = "format";
 
     @Override
     public boolean supports(JsonNode node, String type) {
@@ -44,10 +46,10 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
     }
 
     private SpecType buildStringOrTemporalNodeType(JsonNode node, ParsingContext parsingContext) {
-        SpecType specType = mapToTemporalNodeType(node.path("format").asString(null), parsingContext);
+        SpecType specType = mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), parsingContext);
         if (Objects.isNull(specType)) {
             return StringSpecType.builder()
-                    .format(node.has("format") ? getFormatIfSupported(node) : null)
+                    .format(node.has(JSON_FORMAT_FIELD) ? getFormatIfSupported(node) : null)
                     .minLength(node.has("minLength") ? node.get("minLength").asInt() : null)
                     .maxLength(node.has("maxLength") ? node.get("maxLength").asInt() : null)
                     .pattern(node.has("pattern") ? node.get("pattern").asString(null) : null)
@@ -57,7 +59,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
     }
 
     private StringSpecType.StringTypeFormat getFormatIfSupported(JsonNode node) {
-        String format = node.get("format").asString(null);
+        String format = node.get(JSON_FORMAT_FIELD).asString(null);
         return SUPPORTED_STRING_FORMATS.contains(format)
                 ? StringSpecType.StringTypeFormat.valueOf(format.toUpperCase())
                 : null;

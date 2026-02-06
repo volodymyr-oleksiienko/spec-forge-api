@@ -1,16 +1,20 @@
 package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_DUPLICATE;
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED;
-
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
-import java.util.*;
-import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
+import java.util.*;
+import java.util.stream.Stream;
+
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_DUPLICATE;
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED;
+
 @Component
 public class JsonSchemaParser {
+
+    private static final String JSON_PROPERTIES_FIELD = "properties";
+    private static final String JSON_ITEMS_FIELD = "items";
 
     public SpecModel.WrapperType getWrapperType(JsonNode node) {
         return "array".equals(node.path("type").asString(null))
@@ -19,10 +23,10 @@ public class JsonSchemaParser {
     }
 
     public List<ChildDefinition> extractChildren(JsonNode node, ParsingContext parsingContext) {
-        if (node.has("properties")) {
+        if (node.has(JSON_PROPERTIES_FIELD)) {
             return getFromProperties(node);
         } else if (node.has("items") && node.get("items").has("properties")) {
-            return getFromProperties(node.get("items"));
+            return getFromProperties(node.get(JSON_ITEMS_FIELD));
         } else if (hasComposition(node)) {
             return getFromCompositions(node, parsingContext);
         }

@@ -1,10 +1,10 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StringSpecTypeTest {
 
@@ -32,36 +32,43 @@ class StringSpecTypeTest {
 
     @Test
     void shouldThrowIfNegativeLengths() {
-        assertThatThrownBy(() -> StringSpecType.builder().minLength(-1).build())
+        StringSpecType.Builder minLengthBuilder = StringSpecType.builder().minLength(-1);
+
+        assertThatThrownBy(minLengthBuilder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MinLength [-1] cannot be negative");
 
-        assertThatThrownBy(() -> StringSpecType.builder().maxLength(-1).build())
+        StringSpecType.Builder maxLengthBuilder = StringSpecType.builder().maxLength(-1);
+
+        assertThatThrownBy(maxLengthBuilder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MaxLength [-1] cannot be negative");
     }
 
     @Test
     void shouldThrowIfMinLengthGreaterThanMaxLength() {
-        assertThatThrownBy(() ->
-                        StringSpecType.builder().minLength(10).maxLength(5).build())
+        StringSpecType.Builder builder = StringSpecType.builder().minLength(10).maxLength(5);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("cannot be greater than MaxLength");
     }
 
     @Test
     void shouldThrowIfBothPatternAndFormatArePresent() {
-        assertThatThrownBy(() -> StringSpecType.builder()
-                        .pattern(".*")
-                        .format(StringSpecType.StringTypeFormat.UUID)
-                        .build())
+        StringSpecType.Builder builder =
+                StringSpecType.builder().pattern(".*").format(StringSpecType.StringTypeFormat.UUID);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Cannot use both 'pattern' and 'format' together");
     }
 
     @Test
     void shouldThrowIfInvalidRegex() {
-        assertThatThrownBy(() -> StringSpecType.builder().pattern("[invalid").build())
+        StringSpecType.Builder builder = StringSpecType.builder().pattern("[invalid");
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Invalid Regex Pattern provided: [[invalid]");
     }

@@ -1,10 +1,10 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TimeSpecTypeTest {
 
@@ -17,14 +17,18 @@ class TimeSpecTypeTest {
 
     @Test
     void shouldThrowIfFormatIsEmpty() {
-        assertThatThrownBy(() -> TimeSpecType.builder().build())
+        TimeSpecType.Builder builder = TimeSpecType.builder();
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("Time format cannot be empty");
     }
 
     @Test
     void shouldThrowOnInvalidTimePattern() {
-        assertThatThrownBy(() -> TimeSpecType.builder().format("invalid-fmt").build())
+        TimeSpecType.Builder builder = TimeSpecType.builder().format("invalid-fmt");
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Invalid Time format pattern: [invalid-fmt]");
     }

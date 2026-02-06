@@ -1,10 +1,10 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ListSpecTypeTest {
 
@@ -17,7 +17,7 @@ class ListSpecTypeTest {
                 .build();
 
         assertThat(type.getValueType()).isInstanceOf(IntegerSpecType.class);
-        assertThat(type.getMinItems()).isEqualTo(0);
+        assertThat(type.getMinItems()).isZero();
         assertThat(type.getMaxItems()).isEqualTo(10);
         assertThat(type.isObjectStructure()).isFalse();
     }
@@ -30,25 +30,33 @@ class ListSpecTypeTest {
 
     @Test
     void shouldThrowIfNegativeMinOrMaxItems() {
-        assertThatThrownBy(() -> ListSpecType.builder().minItems(-1).build())
+        ListSpecType.Builder minItemsBuilder = ListSpecType.builder().minItems(-1);
+
+        assertThatThrownBy(minItemsBuilder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MinItems [-1] cannot be negative");
 
-        assertThatThrownBy(() -> ListSpecType.builder().maxItems(-1).build())
+        ListSpecType.Builder maxItemsBuilder = ListSpecType.builder().maxItems(-1);
+
+        assertThatThrownBy(maxItemsBuilder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MaxItems [-1] cannot be negative");
     }
 
     @Test
     void shouldThrowIfMinItemsGreaterThanMaxItems() {
-        assertThatThrownBy(() -> ListSpecType.builder().minItems(5).maxItems(4).build())
+        ListSpecType.Builder builder = ListSpecType.builder().minItems(5).maxItems(4);
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MinItems [5] cannot be greater than MaxItems [4]");
     }
 
     @Test
     void shouldThrowIfValueTypeIsMissing() {
-        assertThatThrownBy(() -> ListSpecType.builder().build())
+        ListSpecType.Builder builder = ListSpecType.builder();
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("ListSpecType must specify valueType");
     }
@@ -59,8 +67,9 @@ class ListSpecTypeTest {
                 .keyType(StringSpecType.builder().build())
                 .valueType(IntegerSpecType.builder().build())
                 .build();
+        ListSpecType.Builder builder = ListSpecType.builder().valueType(mapType);
 
-        assertThatThrownBy(() -> ListSpecType.builder().valueType(mapType).build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Lists cannot contain Maps directly, structure 'List<Map>' is forbidden");
     }
@@ -68,8 +77,9 @@ class ListSpecTypeTest {
     @Test
     void shouldThrowIfNestedListOfObjects() {
         var innerList = ListSpecType.builder().valueType(new ObjectSpecType()).build();
+        ListSpecType.Builder builder = ListSpecType.builder().valueType(innerList);
 
-        assertThatThrownBy(() -> ListSpecType.builder().valueType(innerList).build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Objects cannot be nested in inner lists, 'List<List<Object>>' is forbidden");
     }
@@ -79,8 +89,9 @@ class ListSpecTypeTest {
         var stringType = StringSpecType.builder().build();
         var level1 = ListSpecType.builder().valueType(stringType).build();
         var level2 = ListSpecType.builder().valueType(level1).build();
+        ListSpecType.Builder builder = ListSpecType.builder().valueType(level2);
 
-        assertThatThrownBy(() -> ListSpecType.builder().valueType(level2).build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Max nesting depth exceeded, 'List<List<List<...>>>' is forbidden");
     }

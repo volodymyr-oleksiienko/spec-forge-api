@@ -1,14 +1,15 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.BooleanSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.ObjectSpecType;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SpecPropertyTest {
 
@@ -93,6 +94,7 @@ class SpecPropertyTest {
     @Test
     void shouldThrowIfNullPropertyIsPresentInList() {
         List<SpecProperty> listWithNull = Collections.singletonList(null);
+
         assertThatThrownBy(() -> SpecProperty.ensurePropertiesUniqueness(listWithNull, "TestContext"))
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("cannot contain null properties");

@@ -1,11 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
-import java.util.Set;
-import org.junit.jupiter.api.Test;
 
 class MapSpecTypeTest {
 
@@ -31,9 +32,10 @@ class MapSpecTypeTest {
 
     @Test
     void shouldThrowIfKeyOrValueTypeIsMissing() {
-        assertThatThrownBy(() -> MapSpecType.builder()
-                        .keyType(StringSpecType.builder().build())
-                        .build())
+        MapSpecType.Builder builder =
+                MapSpecType.builder().keyType(StringSpecType.builder().build());
+
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("MapSpecType must specify both keyType and valueType");
     }
@@ -43,11 +45,11 @@ class MapSpecTypeTest {
         var listType = ListSpecType.builder()
                 .valueType(StringSpecType.builder().build())
                 .build();
+        MapSpecType.Builder builder = MapSpecType.builder()
+                .keyType(listType)
+                .valueType(StringSpecType.builder().build());
 
-        assertThatThrownBy(() -> MapSpecType.builder()
-                        .keyType(listType)
-                        .valueType(StringSpecType.builder().build())
-                        .build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining(
                         "Map key must be primitive types (String, Number, Boolean, Enum), found: ListSpecType");
@@ -69,11 +71,10 @@ class MapSpecTypeTest {
                 .keyType(StringSpecType.builder().build())
                 .valueType(new BooleanSpecType())
                 .build();
+        MapSpecType.Builder builder =
+                MapSpecType.builder().keyType(StringSpecType.builder().build()).valueType(innerMap);
 
-        assertThatThrownBy(() -> MapSpecType.builder()
-                        .keyType(StringSpecType.builder().build())
-                        .valueType(innerMap)
-                        .build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Map cannot contain other Map as value, nesting Maps is forbidden");
     }
@@ -83,11 +84,9 @@ class MapSpecTypeTest {
         var stringType = StringSpecType.builder().build();
         var level1 = ListSpecType.builder().valueType(stringType).build();
         var level2 = ListSpecType.builder().valueType(level1).build();
+        MapSpecType.Builder builder = MapSpecType.builder().keyType(stringType).valueType(level2);
 
-        assertThatThrownBy(() -> MapSpecType.builder()
-                        .keyType(stringType)
-                        .valueType(level2)
-                        .build())
+        assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("Map value cannot be nested Lists, 'Map<K, List<List<...>>>' is forbidden");
     }

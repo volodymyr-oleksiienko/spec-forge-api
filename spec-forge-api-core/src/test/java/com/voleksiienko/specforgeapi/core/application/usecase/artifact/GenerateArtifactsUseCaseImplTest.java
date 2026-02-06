@@ -1,11 +1,5 @@
 package com.voleksiienko.specforgeapi.core.application.usecase.artifact;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED;
-import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_MAP_KEY_DEFAULTED_TO_STRING;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
-
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSampleCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSchemaCommand;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSampleToJsonSchemaPort;
@@ -15,12 +9,19 @@ import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationEx
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResult;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.Warning;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED;
+import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_MAP_KEY_DEFAULTED_TO_STRING;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateArtifactsUseCaseImplTest {
@@ -55,11 +56,12 @@ class GenerateArtifactsUseCaseImplTest {
     @Test
     void shouldThrowWhenJsonSchemaValidationFails() {
         var schema = "invalid";
+        GenerateFromJsonSchemaCommand command = new GenerateFromJsonSchemaCommand(schema);
         doThrow(new SpecModelValidationException("Fail"))
                 .when(jsonSchemaValidator)
                 .validate(schema);
 
-        assertThatThrownBy(() -> useCase.generateFromJsonSchema(new GenerateFromJsonSchemaCommand(schema)))
+        assertThatThrownBy(() -> useCase.generateFromJsonSchema(command))
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessage("Fail");
 
