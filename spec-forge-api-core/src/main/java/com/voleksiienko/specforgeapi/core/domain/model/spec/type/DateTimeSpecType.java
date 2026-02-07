@@ -56,6 +56,7 @@ public final class DateTimeSpecType extends PrimitiveSpecType {
                 dateTimeFormatter.format(OffsetDateTime.now());
                 return dateTimeFormatter;
             } catch (Exception ignored) {
+                // ignore to try format with LocalDateTime
             }
 
             try {
@@ -70,7 +71,7 @@ public final class DateTimeSpecType extends PrimitiveSpecType {
         private String generateExample(DateTimeFormatter dateTimeFormatter) {
             try {
                 return dateTimeFormatter.format(OffsetDateTime.now());
-            } catch (Exception e1) {
+            } catch (Exception _) {
                 try {
                     return dateTimeFormatter.format(LocalDateTime.now());
                 } catch (Exception e2) {

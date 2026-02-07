@@ -148,12 +148,11 @@ public final class StringSpecType extends PrimitiveSpecType {
                 try {
                     UUID.fromString(example);
                 } catch (IllegalArgumentException e) {
-                    throw new SpecModelValidationException("Example [%s] is not a valid UUID".formatted(example));
+                    throw new SpecModelValidationException("Example [%s] is not a valid UUID".formatted(example), e);
                 }
-            } else if (StringTypeFormat.EMAIL == format) {
-                if (!EMAIL_PATTERN.matcher(example).matches()) {
-                    throw new SpecModelValidationException("Example [%s] is not a valid EMAIL".formatted(example));
-                }
+            } else if (StringTypeFormat.EMAIL == format
+                    && !EMAIL_PATTERN.matcher(example).matches()) {
+                throw new SpecModelValidationException("Example [%s] is not a valid EMAIL".formatted(example));
             }
         }
     }

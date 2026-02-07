@@ -52,13 +52,14 @@ public final class TimeSpecType extends PrimitiveSpecType {
             }
 
             try {
-                dateTimeFormatter.format(LocalTime.now());
+                dateTimeFormatter.format(OffsetTime.now());
                 return dateTimeFormatter;
             } catch (Exception ignored) {
+                // ignore to try format with LocalTime
             }
 
             try {
-                dateTimeFormatter.format(OffsetTime.now());
+                dateTimeFormatter.format(LocalTime.now());
                 return dateTimeFormatter;
             } catch (Exception e) {
                 throw new SpecModelValidationException(
@@ -69,7 +70,7 @@ public final class TimeSpecType extends PrimitiveSpecType {
         private String generatedExample(DateTimeFormatter dateTimeFormatter) {
             try {
                 return dateTimeFormatter.format(OffsetTime.now());
-            } catch (Exception e1) {
+            } catch (Exception _) {
                 try {
                     return dateTimeFormatter.format(LocalTime.now());
                 } catch (Exception e2) {
