@@ -1,25 +1,24 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.util.List;
 import java.util.Objects;
 
-public final class DoubleSpecType implements SpecType {
+public final class DoubleSpecType extends PrimitiveSpecType {
+
+    private static final Double DEFAULT_EXAMPLE = 42.9832;
 
     private final Double minimum;
     private final Double maximum;
 
     private DoubleSpecType(Builder builder) {
+        super(builder.examples);
         this.minimum = builder.minimum;
         this.maximum = builder.maximum;
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public boolean isObjectStructure() {
-        return false;
     }
 
     public Double getMinimum() {
@@ -34,6 +33,7 @@ public final class DoubleSpecType implements SpecType {
 
         private Double minimum;
         private Double maximum;
+        private List<String> examples;
 
         public Builder minimum(Double minimum) {
             this.minimum = minimum;
@@ -50,7 +50,20 @@ public final class DoubleSpecType implements SpecType {
                 throw new SpecModelValidationException(
                         "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
             }
+            examples = List.of(generateExample());
             return new DoubleSpecType(this);
+        }
+
+        private String generateExample() {
+            Double exampleValue;
+            if (Objects.nonNull(minimum)) {
+                exampleValue = minimum;
+            } else if (Objects.nonNull(maximum)) {
+                exampleValue = maximum;
+            } else {
+                exampleValue = DEFAULT_EXAMPLE;
+            }
+            return String.valueOf(exampleValue);
         }
     }
 }

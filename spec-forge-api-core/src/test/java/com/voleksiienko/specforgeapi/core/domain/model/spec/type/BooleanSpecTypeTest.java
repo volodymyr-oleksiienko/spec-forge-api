@@ -10,5 +10,6 @@ class BooleanSpecTypeTest {
     void shouldHaveFalseObjectStructureFlag() {
         var type = new BooleanSpecType();
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).containsExactlyInAnyOrder(Boolean.TRUE.toString(), Boolean.FALSE.toString());
     }
 }

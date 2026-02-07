@@ -1,5 +1,6 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import static com.voleksiienko.specforgeapi.core.TestHelper.buildObjectSpecTypeSample;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +25,7 @@ class ListSpecTypeTest {
 
     @Test
     void shouldReturnTrueForIsObjectStructureIfValueTypeIsObject() {
-        var type = ListSpecType.builder().valueType(new ObjectSpecType()).build();
+        var type = ListSpecType.builder().valueType(buildObjectSpecTypeSample()).build();
         assertThat(type.isObjectStructure()).isTrue();
     }
 
@@ -76,7 +77,8 @@ class ListSpecTypeTest {
 
     @Test
     void shouldThrowIfNestedListOfObjects() {
-        var innerList = ListSpecType.builder().valueType(new ObjectSpecType()).build();
+        var innerList =
+                ListSpecType.builder().valueType(buildObjectSpecTypeSample()).build();
         ListSpecType.Builder builder = ListSpecType.builder().valueType(innerList);
 
         assertThatThrownBy(builder::build)

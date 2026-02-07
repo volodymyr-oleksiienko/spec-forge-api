@@ -1,5 +1,6 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import static com.voleksiienko.specforgeapi.core.TestHelper.buildObjectSpecTypeSample;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +25,7 @@ class MapSpecTypeTest {
     void shouldReturnTrueForIsObjectStructureIfValueTypeIsObject() {
         var type = MapSpecType.builder()
                 .keyType(StringSpecType.builder().build())
-                .valueType(new ObjectSpecType())
+                .valueType(buildObjectSpecTypeSample())
                 .build();
         assertThat(type.isObjectStructure()).isTrue();
     }

@@ -4,22 +4,19 @@ import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-public final class DateSpecType implements SpecType {
+public final class DateSpecType extends PrimitiveSpecType {
 
     private final String format;
 
     private DateSpecType(Builder builder) {
+        super(builder.examples);
         this.format = builder.format;
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public boolean isObjectStructure() {
-        return false;
     }
 
     public String getFormat() {
@@ -29,6 +26,7 @@ public final class DateSpecType implements SpecType {
     public static class Builder {
 
         private String format;
+        private List<String> examples;
 
         public Builder format(String format) {
             this.format = format;
@@ -39,12 +37,19 @@ public final class DateSpecType implements SpecType {
             if (Asserts.isBlank(format)) {
                 throw new SpecModelValidationException("Date format cannot be empty");
             }
+            DateTimeFormatter formatter = getFormatter();
+            examples = List.of(formatter.format(LocalDate.now()));
+            return new DateSpecType(this);
+        }
+
+        private DateTimeFormatter getFormatter() {
             try {
-                DateTimeFormatter.ofPattern(format).format(LocalDate.now());
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format);
+                dateTimeFormatter.format(LocalDate.now());
+                return dateTimeFormatter;
             } catch (Exception e) {
                 throw new SpecModelValidationException("Invalid Date format pattern: %s".formatted(format), e);
             }
-            return new DateSpecType(this);
         }
     }
 }

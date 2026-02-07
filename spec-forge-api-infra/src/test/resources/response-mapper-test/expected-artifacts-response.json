@@ -5,7 +5,11 @@
       {
         "name": "is_active",
         "type": {
-          "type": "BOOLEAN"
+          "type": "BOOLEAN",
+          "examples": [
+            "true",
+            "false"
+          ]
         },
         "required": true,
         "description": "Basic Boolean"
@@ -15,7 +19,10 @@
         "type": {
           "type": "INTEGER",
           "minimum": 0,
-          "maximum": 10
+          "maximum": 10,
+          "examples": [
+            "0"
+          ]
         },
         "required": true,
         "description": "Basic Integer"
@@ -25,7 +32,10 @@
         "type": {
           "type": "DOUBLE",
           "minimum": 0.0,
-          "maximum": 100.0
+          "maximum": 100.0,
+          "examples": [
+            "0.0"
+          ]
         },
         "required": false,
         "description": "Basic Double"
@@ -36,7 +46,10 @@
           "type": "DECIMAL",
           "minimum": 0,
           "maximum": 100000,
-          "scale": 2
+          "scale": 2,
+          "examples": [
+            "0.00"
+          ]
         },
         "required": false,
         "description": "Basic Decimal"
@@ -62,21 +75,21 @@
       {
         "name": "meta_data",
         "type": {
-          "type": "OBJECT"
+          "type": "OBJECT",
+          "children": [
+            {
+              "name": "created_at",
+              "type": {
+                "type": "DATE_TIME",
+                "format": "yyyy-MM-dd HH:mm"
+              },
+              "required": false,
+              "description": "DateTime Type"
+            }
+          ]
         },
         "required": false,
-        "description": "Object Type",
-        "children": [
-          {
-            "name": "created_at",
-            "type": {
-              "type": "DATE_TIME",
-              "format": "yyyy-MM-dd HH:mm"
-            },
-            "required": false,
-            "description": "DateTime Type"
-          }
-        ]
+        "description": "Object Type"
       },
       {
         "name": "roles",
@@ -87,6 +100,10 @@
           "valueType": {
             "type": "ENUM",
             "values": [
+              "ADMIN",
+              "USER"
+            ],
+            "examples": [
               "ADMIN",
               "USER"
             ]

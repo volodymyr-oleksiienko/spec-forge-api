@@ -4,10 +4,13 @@ import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingE
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TYPE_DEFAULTED_TO_STRING;
 
 import com.voleksiienko.specforgeapi.core.common.Asserts;
+import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +23,15 @@ public class SpecTypeCreatorFacade {
 
     private List<SpecTypeCreator> specTypeCreators;
 
-    public SpecType create(JsonNode node, ParsingContext parsingContext) {
+    public SpecType create(
+            JsonNode node,
+            ParsingContext parsingContext,
+            BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
         String type = getJsonNodeType(node, parsingContext);
         return specTypeCreators.stream()
                 .filter(nodeMapper -> nodeMapper.supports(node, type))
                 .findFirst()
-                .map(nodeMapper -> nodeMapper.createType(node, parsingContext))
+                .map(nodeMapper -> nodeMapper.createType(node, parsingContext, mapToExamples(node), propertyCreator))
                 .orElse(null);
     }
 
@@ -70,6 +76,16 @@ public class SpecTypeCreatorFacade {
             return "string";
         }
         return null;
+    }
+
+    private List<String> mapToExamples(JsonNode node) {
+        List<String> examples = new ArrayList<>();
+        if (node.has("examples")) {
+            node.get("examples").forEach(ex -> examples.add(ex.asString(null)));
+        } else if (node.has("example")) {
+            examples.add(node.get("example").asString());
+        }
+        return examples;
     }
 
     @Lazy

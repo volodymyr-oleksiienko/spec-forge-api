@@ -15,6 +15,7 @@ class DoubleSpecTypeTest {
         assertThat(type.getMinimum()).isEqualTo(1.5);
         assertThat(type.getMaximum()).isEqualTo(10.5);
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).containsExactlyInAnyOrder("1.5");
     }
 
     @Test

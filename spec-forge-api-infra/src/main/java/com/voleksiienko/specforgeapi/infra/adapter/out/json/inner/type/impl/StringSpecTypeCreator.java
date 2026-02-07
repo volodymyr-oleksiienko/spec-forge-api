@@ -2,11 +2,14 @@ package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.impl;
 
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
 
+import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.SpecTypeCreator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -23,8 +26,12 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
     }
 
     @Override
-    public SpecType createType(JsonNode node, ParsingContext parsingContext) {
-        return isEnum(node) ? buildEnumNodeType(node) : buildStringOrTemporalNodeType(node, parsingContext);
+    public SpecType createType(
+            JsonNode node,
+            ParsingContext parsingContext,
+            List<String> examples,
+            BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
+        return isEnum(node) ? buildEnumNodeType(node) : buildStringOrTemporalNodeType(node, examples, parsingContext);
     }
 
     private boolean isEnum(JsonNode node) {
@@ -44,7 +51,8 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 .collect(Collectors.toSet());
     }
 
-    private SpecType buildStringOrTemporalNodeType(JsonNode node, ParsingContext parsingContext) {
+    private SpecType buildStringOrTemporalNodeType(
+            JsonNode node, List<String> examples, ParsingContext parsingContext) {
         SpecType specType = mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), parsingContext);
         if (Objects.isNull(specType)) {
             return StringSpecType.builder()
@@ -52,6 +60,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                     .minLength(node.has("minLength") ? node.get("minLength").asInt() : null)
                     .maxLength(node.has("maxLength") ? node.get("maxLength").asInt() : null)
                     .pattern(node.has("pattern") ? node.get("pattern").asString(null) : null)
+                    .examples(examples)
                     .build();
         }
         return specType;

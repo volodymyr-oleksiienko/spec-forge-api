@@ -1,9 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-public final class BooleanSpecType implements SpecType {
+import java.util.List;
 
-    @Override
-    public boolean isObjectStructure() {
-        return false;
+public final class BooleanSpecType extends PrimitiveSpecType {
+
+    private static final List<String> BOOLEAN_EXAMPLES = List.of(Boolean.TRUE.toString(), Boolean.FALSE.toString());
+
+    public BooleanSpecType() {
+        super(BOOLEAN_EXAMPLES);
     }
 }

@@ -8,11 +8,28 @@ import org.junit.jupiter.api.Test;
 
 class TimeSpecTypeTest {
 
+    private static final String TIME_FORMAT = "HH:mm";
+    private static final String TIME_FORMAT_WITH_OFFSET = "HH:mm:ssXXX";
+
     @Test
     void shouldBuildValidTimeType() {
-        var type = TimeSpecType.builder().format("HH:mm:ss").build();
-        assertThat(type.getFormat()).isEqualTo("HH:mm:ss");
+        var type = TimeSpecType.builder().format(TIME_FORMAT).build();
+
+        assertThat(type.getFormat()).isEqualTo(TIME_FORMAT);
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).hasSize(1).first().asString().matches("^\\d{2}:\\d{2}$");
+    }
+
+    @Test
+    void shouldSupportIsoFormatWithOffset() {
+        var type = TimeSpecType.builder().format(TIME_FORMAT_WITH_OFFSET).build();
+
+        assertThat(type.getFormat()).isEqualTo(TIME_FORMAT_WITH_OFFSET);
+        assertThat(type.getExamples())
+                .hasSize(1)
+                .first()
+                .asString()
+                .matches("^\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})$");
     }
 
     @Test
@@ -30,6 +47,6 @@ class TimeSpecTypeTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
-                .hasMessageContaining("Invalid Time format pattern: [invalid-fmt]");
+                .hasMessageContaining("Invalid Time format syntax: [invalid-fmt]");
     }
 }

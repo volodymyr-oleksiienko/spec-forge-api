@@ -8,11 +8,29 @@ import org.junit.jupiter.api.Test;
 
 class DateTimeSpecTypeTest {
 
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    private static final String DATE_TIME_FORMAT_WITH_OFFSET = "yyyy-MM-dd'T'HH:mm:ssXXX";
+
     @Test
     void shouldBuildValidDateTimeType() {
-        var type = DateTimeSpecType.builder().format("yyyy-MM-dd'T'HH:mm:ssXXX").build();
-        assertThat(type.getFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ssXXX");
+        var type = DateTimeSpecType.builder().format(DATE_TIME_FORMAT).build();
+
+        assertThat(type.getFormat()).isEqualTo(DATE_TIME_FORMAT);
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).hasSize(1).first().asString().matches("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$");
+    }
+
+    @Test
+    void shouldSupportIsoFormatWithOffset() {
+        var type =
+                DateTimeSpecType.builder().format(DATE_TIME_FORMAT_WITH_OFFSET).build();
+
+        assertThat(type.getFormat()).isEqualTo(DATE_TIME_FORMAT_WITH_OFFSET);
+        assertThat(type.getExamples())
+                .hasSize(1)
+                .first()
+                .asString()
+                .matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})$");
     }
 
     @Test
@@ -30,6 +48,6 @@ class DateTimeSpecTypeTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
-                .hasMessageContaining("Invalid DateTime format pattern: [invalid-fmt]");
+                .hasMessageContaining("Invalid DateTime format pattern syntax: [invalid-fmt]");
     }
 }

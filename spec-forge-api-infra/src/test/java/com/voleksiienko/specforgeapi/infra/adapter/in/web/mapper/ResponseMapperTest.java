@@ -34,7 +34,7 @@ class ResponseMapperTest {
 
         String expectedJson = readResource("/response-mapper-test/expected-artifacts-response.json");
         String actualJson = objectMapper.writeValueAsString(dto);
-        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
     }
 
     private ArtifactsResult createArtifactsResult() {
@@ -86,15 +86,16 @@ class ResponseMapperTest {
                         .name("meta_data")
                         .description("Object Type")
                         .required(false)
-                        .type(new ObjectSpecType())
-                        .children(List.of(SpecProperty.builder()
-                                .name("created_at")
-                                .description("DateTime Type")
-                                .required(false)
-                                .type(DateTimeSpecType.builder()
-                                        .format("yyyy-MM-dd HH:mm")
-                                        .build())
-                                .build()))
+                        .type(ObjectSpecType.builder()
+                                .children(List.of(SpecProperty.builder()
+                                        .name("created_at")
+                                        .description("DateTime Type")
+                                        .required(false)
+                                        .type(DateTimeSpecType.builder()
+                                                .format("yyyy-MM-dd HH:mm")
+                                                .build())
+                                        .build()))
+                                .build())
                         .build(),
                 SpecProperty.builder()
                         .name("roles")

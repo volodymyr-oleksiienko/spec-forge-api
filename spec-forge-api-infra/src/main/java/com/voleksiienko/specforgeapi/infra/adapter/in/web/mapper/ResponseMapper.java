@@ -45,21 +45,20 @@ public class ResponseMapper {
                 property.getName(),
                 mapType(property.getType()),
                 property.isRequired(),
-                mapProperties(property.getChildren()),
                 property.getDescription(),
-                property.getExamples(),
                 property.isDeprecated() ? true : null);
     }
 
     private SpecTypeDto mapType(SpecType type) {
         return switch (type) {
-            case BooleanSpecType ignored -> new SpecTypeDto.BooleanTypeDto();
+            case BooleanSpecType t -> new SpecTypeDto.BooleanTypeDto(t.getExamples());
 
-            case IntegerSpecType t -> new SpecTypeDto.IntegerTypeDto(t.getMinimum(), t.getMaximum());
+            case IntegerSpecType t -> new SpecTypeDto.IntegerTypeDto(t.getMinimum(), t.getMaximum(), t.getExamples());
 
-            case DoubleSpecType t -> new SpecTypeDto.DoubleTypeDto(t.getMinimum(), t.getMaximum());
+            case DoubleSpecType t -> new SpecTypeDto.DoubleTypeDto(t.getMinimum(), t.getMaximum(), t.getExamples());
 
-            case DecimalSpecType t -> new SpecTypeDto.DecimalTypeDto(t.getMinimum(), t.getMaximum(), t.getScale());
+            case DecimalSpecType t ->
+                new SpecTypeDto.DecimalTypeDto(t.getMinimum(), t.getMaximum(), t.getScale(), t.getExamples());
 
             case StringSpecType t ->
                 new SpecTypeDto.StringTypeDto(
@@ -69,16 +68,17 @@ public class ResponseMapper {
                         Objects.nonNull(t.getFormat())
                                 ? SpecTypeDto.StringTypeDto.StringTypeFormat.valueOf(
                                         t.getFormat().name())
-                                : null);
+                                : null,
+                        t.getExamples());
 
             case EnumSpecType t ->
-                new SpecTypeDto.EnumTypeDto(t.getValues().stream().sorted().toList());
+                new SpecTypeDto.EnumTypeDto(t.getValues().stream().sorted().toList(), t.getExamples());
 
-            case DateSpecType t -> new SpecTypeDto.DateTypeDto(t.getFormat());
-            case TimeSpecType t -> new SpecTypeDto.TimeTypeDto(t.getFormat());
-            case DateTimeSpecType t -> new SpecTypeDto.DateTimeTypeDto(t.getFormat());
+            case DateSpecType t -> new SpecTypeDto.DateTypeDto(t.getFormat(), t.getExamples());
+            case TimeSpecType t -> new SpecTypeDto.TimeTypeDto(t.getFormat(), t.getExamples());
+            case DateTimeSpecType t -> new SpecTypeDto.DateTimeTypeDto(t.getFormat(), t.getExamples());
 
-            case ObjectSpecType ignored -> new SpecTypeDto.ObjectTypeDto();
+            case ObjectSpecType t -> new SpecTypeDto.ObjectTypeDto(mapProperties(t.getChildren()));
 
             case ListSpecType t ->
                 new SpecTypeDto.ListTypeDto(t.getMinItems(), t.getMaxItems(), mapType(t.getValueType()));
