@@ -8,7 +8,7 @@ class BooleanSpecTypeTest {
 
     @Test
     void shouldHaveFalseObjectStructureFlag() {
-        var type = new BooleanSpecType();
+        var type = BooleanSpecType.builder().build();
         assertThat(type.isObjectStructure()).isFalse();
     }
 }

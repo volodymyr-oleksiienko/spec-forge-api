@@ -2,11 +2,14 @@ package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.impl;
 
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED;
 
+import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.SpecTypeCreator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -23,8 +26,14 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
     }
 
     @Override
-    public SpecType createType(JsonNode node, ParsingContext parsingContext) {
-        return isEnum(node) ? buildEnumNodeType(node) : buildStringOrTemporalNodeType(node, parsingContext);
+    public SpecType createType(
+            JsonNode node,
+            ParsingContext parsingContext,
+            List<String> examples,
+            BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
+        return isEnum(node)
+                ? buildEnumNodeType(node, examples)
+                : buildStringOrTemporalNodeType(node, examples, parsingContext);
     }
 
     private boolean isEnum(JsonNode node) {
@@ -32,8 +41,11 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 && node.get("enum").valueStream().map(JsonNode::asString).anyMatch(Objects::nonNull);
     }
 
-    private SpecType buildEnumNodeType(JsonNode node) {
-        return EnumSpecType.builder().values(getEnumValues(node)).build();
+    private SpecType buildEnumNodeType(JsonNode node, List<String> examples) {
+        return EnumSpecType.builder()
+                .values(getEnumValues(node))
+                .examples(examples)
+                .build();
     }
 
     private Set<String> getEnumValues(JsonNode node) {
@@ -44,14 +56,17 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 .collect(Collectors.toSet());
     }
 
-    private SpecType buildStringOrTemporalNodeType(JsonNode node, ParsingContext parsingContext) {
-        SpecType specType = mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), parsingContext);
+    private SpecType buildStringOrTemporalNodeType(
+            JsonNode node, List<String> examples, ParsingContext parsingContext) {
+        SpecType specType =
+                mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), examples, parsingContext);
         if (Objects.isNull(specType)) {
             return StringSpecType.builder()
                     .format(node.has(JSON_FORMAT_FIELD) ? getFormatIfSupported(node) : null)
                     .minLength(node.has("minLength") ? node.get("minLength").asInt() : null)
                     .maxLength(node.has("maxLength") ? node.get("maxLength").asInt() : null)
                     .pattern(node.has("pattern") ? node.get("pattern").asString(null) : null)
+                    .examples(examples)
                     .build();
         }
         return specType;
@@ -64,7 +79,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 : null;
     }
 
-    private SpecType mapToTemporalNodeType(String format, ParsingContext parsingContext) {
+    private SpecType mapToTemporalNodeType(String format, List<String> examples, ParsingContext parsingContext) {
         return switch (format) {
             case "date-time" -> {
                 String defaultFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -72,7 +87,10 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'date-time' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield DateTimeSpecType.builder().format(defaultFormat).build();
+                yield DateTimeSpecType.builder()
+                        .format(defaultFormat)
+                        .examples(examples)
+                        .build();
             }
             case "date" -> {
                 String defaultFormat = "yyyy-MM-dd";
@@ -80,7 +98,10 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'date' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield DateSpecType.builder().format(defaultFormat).build();
+                yield DateSpecType.builder()
+                        .format(defaultFormat)
+                        .examples(examples)
+                        .build();
             }
             case "time" -> {
                 String defaultFormat = "HH:mm:ss";
@@ -88,7 +109,10 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'time' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield TimeSpecType.builder().format(defaultFormat).build();
+                yield TimeSpecType.builder()
+                        .format(defaultFormat)
+                        .examples(examples)
+                        .build();
             }
             case null, default -> null;
         };

@@ -62,21 +62,21 @@
       {
         "name": "meta_data",
         "type": {
-          "type": "OBJECT"
+          "type": "OBJECT",
+          "children": [
+            {
+              "name": "created_at",
+              "type": {
+                "type": "DATE_TIME",
+                "format": "yyyy-MM-dd HH:mm"
+              },
+              "required": false,
+              "description": "DateTime Type"
+            }
+          ]
         },
         "required": false,
-        "description": "Object Type",
-        "children": [
-          {
-            "name": "created_at",
-            "type": {
-              "type": "DATE_TIME",
-              "format": "yyyy-MM-dd HH:mm"
-            },
-            "required": false,
-            "description": "DateTime Type"
-          }
-        ]
+        "description": "Object Type"
       },
       {
         "name": "roles",

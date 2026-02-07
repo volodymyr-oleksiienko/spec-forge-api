@@ -1,5 +1,6 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec;
 
+import static com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty.ensurePropertiesUniqueness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -16,10 +17,11 @@ class SpecPropertyTest {
     void shouldBuildValidPrimitiveProperty() {
         var prop = SpecProperty.builder()
                 .name("isActive")
-                .type(new BooleanSpecType())
+                .type(BooleanSpecType.builder()
+                        .examples(List.of("true", "false"))
+                        .build())
                 .required(true)
                 .description("Active status")
-                .examples(List.of("true", "false"))
                 .deprecated(true)
                 .build();
 
@@ -27,31 +29,30 @@ class SpecPropertyTest {
         assertThat(prop.getType()).isInstanceOf(BooleanSpecType.class);
         assertThat(prop.isRequired()).isTrue();
         assertThat(prop.getDescription()).isEqualTo("Active status");
-        assertThat(prop.getExamples()).containsExactly("true", "false");
+        assertThat(((BooleanSpecType) prop.getType()).getExamples()).containsExactly("true", "false");
         assertThat(prop.isDeprecated()).isTrue();
-        assertThat(prop.getChildren()).isEmpty();
     }
 
     @Test
     void shouldBuildValidObjectPropertyWithChildren() {
         var child = SpecProperty.builder()
                 .name("childId")
-                .type(new BooleanSpecType())
+                .type(BooleanSpecType.builder().build())
                 .build();
 
         var parent = SpecProperty.builder()
                 .name("parentObj")
-                .type(new ObjectSpecType())
-                .children(List.of(child))
+                .type(ObjectSpecType.builder().children(List.of(child)).build())
                 .build();
 
-        assertThat(parent.getChildren()).hasSize(1);
-        assertThat(parent.getChildren().get(0).getName()).isEqualTo("childId");
+        var parentType = (ObjectSpecType) parent.getType();
+        assertThat(parentType.getChildren()).hasSize(1);
+        assertThat(parentType.getChildren().getFirst().getName()).isEqualTo("childId");
     }
 
     @Test
     void shouldThrowWhenNameIsMissing() {
-        var builder = SpecProperty.builder().type(new BooleanSpecType());
+        var builder = SpecProperty.builder().type(BooleanSpecType.builder().build());
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
@@ -68,46 +69,26 @@ class SpecPropertyTest {
     }
 
     @Test
-    void shouldThrowWhenObjectTypeHasNoChildren() {
-        var builder = SpecProperty.builder()
-                .name("emptyObj")
-                .type(new ObjectSpecType())
-                .children(List.of());
-
-        assertThatThrownBy(builder::build)
-                .isInstanceOf(SpecModelValidationException.class)
-                .hasMessageContaining("must have children to define its structure");
-    }
-
-    @Test
-    void shouldThrowWhenPrimitiveTypeHasChildren() {
-        var child = SpecProperty.builder().name("c").type(new BooleanSpecType()).build();
-        var builder =
-                SpecProperty.builder().name("prim").type(new BooleanSpecType()).children(List.of(child));
-
-        assertThatThrownBy(builder::build)
-                .isInstanceOf(SpecModelValidationException.class)
-                .hasMessageContaining("is primitive and cannot have children");
-    }
-
-    @Test
     void shouldThrowIfNullPropertyIsPresentInList() {
         List<SpecProperty> listWithNull = Collections.singletonList(null);
 
-        assertThatThrownBy(() -> SpecProperty.ensurePropertiesUniqueness(listWithNull, "TestContext"))
+        assertThatThrownBy(() -> ensurePropertiesUniqueness(listWithNull))
                 .isInstanceOf(SpecModelValidationException.class)
                 .hasMessageContaining("cannot contain null properties");
     }
 
     @Test
     void shouldThrowOnDuplicateChildNames() {
-        var child1 =
-                SpecProperty.builder().name("dup").type(new BooleanSpecType()).build();
-        var child2 =
-                SpecProperty.builder().name("dup").type(new BooleanSpecType()).build();
+        var child1 = SpecProperty.builder()
+                .name("dup")
+                .type(BooleanSpecType.builder().build())
+                .build();
+        var child2 = SpecProperty.builder()
+                .name("dup")
+                .type(BooleanSpecType.builder().build())
+                .build();
 
-        var builder =
-                SpecProperty.builder().name("parent").type(new ObjectSpecType()).children(List.of(child1, child2));
+        var builder = ObjectSpecType.builder().children(List.of(child1, child2));
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)

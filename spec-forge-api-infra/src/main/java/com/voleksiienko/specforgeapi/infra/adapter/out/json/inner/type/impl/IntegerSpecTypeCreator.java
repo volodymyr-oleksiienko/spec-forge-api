@@ -1,9 +1,12 @@
 package com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.impl;
 
+import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.IntegerSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.ParsingContext;
 import com.voleksiienko.specforgeapi.infra.adapter.out.json.inner.type.SpecTypeCreator;
+import java.util.List;
+import java.util.function.BiFunction;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
@@ -16,7 +19,11 @@ public class IntegerSpecTypeCreator implements SpecTypeCreator {
     }
 
     @Override
-    public SpecType createType(JsonNode node, ParsingContext parsingContext) {
+    public SpecType createType(
+            JsonNode node,
+            ParsingContext parsingContext,
+            List<String> examples,
+            BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
         IntegerSpecType.Builder builder = IntegerSpecType.builder();
         if (node.has("exclusiveMinimum")) {
             builder.minimum(node.get("exclusiveMinimum").asLong() + 1);
@@ -28,6 +35,6 @@ public class IntegerSpecTypeCreator implements SpecTypeCreator {
         } else if (node.has("maximum")) {
             builder.maximum(node.get("maximum").asLong());
         }
-        return builder.build();
+        return builder.examples(examples).build();
     }
 }

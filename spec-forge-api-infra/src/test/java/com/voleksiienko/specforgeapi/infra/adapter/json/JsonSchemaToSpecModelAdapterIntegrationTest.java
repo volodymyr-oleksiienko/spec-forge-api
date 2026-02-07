@@ -101,7 +101,7 @@ class JsonSchemaToSpecModelAdapterIntegrationTest {
 
         // 8. Metadata
         SpecProperty exampleProp = getProp(props, "exampleField");
-        assertThat(exampleProp.getExamples()).contains("ex1");
+        assertThat(((PrimitiveSpecType) exampleProp.getType()).getExamples()).contains("ex1");
         assertThat(exampleProp.getDescription()).isEqualTo("desc");
     }
 

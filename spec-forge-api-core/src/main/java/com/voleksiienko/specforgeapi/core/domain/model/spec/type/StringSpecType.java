@@ -1,10 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public final class StringSpecType implements SpecType {
+public final class StringSpecType extends PrimitiveSpecType {
 
     private final String pattern;
     private final Integer minLength;
@@ -12,6 +14,7 @@ public final class StringSpecType implements SpecType {
     private final StringTypeFormat format;
 
     private StringSpecType(Builder builder) {
+        super(builder.examples);
         this.pattern = builder.pattern;
         this.minLength = builder.minLength;
         this.maxLength = builder.maxLength;
@@ -20,11 +23,6 @@ public final class StringSpecType implements SpecType {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public boolean isObjectStructure() {
-        return false;
     }
 
     public String getPattern() {
@@ -54,6 +52,7 @@ public final class StringSpecType implements SpecType {
         private Integer minLength;
         private Integer maxLength;
         private StringTypeFormat format;
+        private List<String> examples;
 
         public Builder pattern(String pattern) {
             this.pattern = pattern;
@@ -72,6 +71,11 @@ public final class StringSpecType implements SpecType {
 
         public Builder format(StringTypeFormat format) {
             this.format = format;
+            return this;
+        }
+
+        public Builder examples(List<String> examples) {
+            this.examples = examples;
             return this;
         }
 
@@ -96,6 +100,9 @@ public final class StringSpecType implements SpecType {
                     throw new SpecModelValidationException(
                             "Invalid Regex Pattern provided: [%s]".formatted(pattern), e);
                 }
+            }
+            if (Asserts.isNotEmpty(examples)) {
+                examples = List.copyOf(examples);
             }
             return new StringSpecType(this);
         }

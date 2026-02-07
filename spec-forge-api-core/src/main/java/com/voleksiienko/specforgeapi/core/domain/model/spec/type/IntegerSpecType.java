@@ -1,25 +1,22 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.util.List;
 import java.util.Objects;
 
-public final class IntegerSpecType implements SpecType {
+public final class IntegerSpecType extends PrimitiveSpecType {
 
     private final Long minimum;
     private final Long maximum;
 
     private IntegerSpecType(Builder builder) {
+        super(builder.examples);
         this.minimum = builder.minimum;
         this.maximum = builder.maximum;
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public boolean isObjectStructure() {
-        return false;
     }
 
     public Long getMinimum() {
@@ -34,6 +31,7 @@ public final class IntegerSpecType implements SpecType {
 
         private Long minimum;
         private Long maximum;
+        private List<String> examples;
 
         public Builder minimum(Long minimum) {
             this.minimum = minimum;
@@ -42,6 +40,11 @@ public final class IntegerSpecType implements SpecType {
 
         public Builder maximum(Long maximum) {
             this.maximum = maximum;
+            return this;
+        }
+
+        public Builder examples(List<String> examples) {
+            this.examples = examples;
             return this;
         }
 

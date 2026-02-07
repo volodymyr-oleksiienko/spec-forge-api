@@ -35,19 +35,24 @@ public record SpecModelDto(
     })
     public sealed interface SpecTypeDto {
 
-        record BooleanTypeDto() implements SpecTypeDto {}
+        record BooleanTypeDto(List<String> examples) implements SpecTypeDto {}
 
-        record IntegerTypeDto(Long minimum, Long maximum) implements SpecTypeDto {}
+        record IntegerTypeDto(Long minimum, Long maximum, List<String> examples) implements SpecTypeDto {}
 
-        record DoubleTypeDto(Double minimum, Double maximum) implements SpecTypeDto {}
+        record DoubleTypeDto(Double minimum, Double maximum, List<String> examples) implements SpecTypeDto {}
 
         record DecimalTypeDto(
                 BigDecimal minimum,
                 BigDecimal maximum,
-                @Positive Integer scale) implements SpecTypeDto {}
+                @Positive Integer scale,
+                List<String> examples) implements SpecTypeDto {}
 
         record StringTypeDto(
-                @Positive Integer minLength, @Positive Integer maxLength, String pattern, StringTypeFormat format)
+                @Positive Integer minLength,
+                @Positive Integer maxLength,
+                String pattern,
+                StringTypeFormat format,
+                List<String> examples)
                 implements SpecTypeDto {
 
             public enum StringTypeFormat {
@@ -56,15 +61,15 @@ public record SpecModelDto(
             }
         }
 
-        record EnumTypeDto(@NotEmpty List<String> values) implements SpecTypeDto {}
+        record EnumTypeDto(@NotEmpty List<String> values, List<String> examples) implements SpecTypeDto {}
 
-        record DateTypeDto(String format) implements SpecTypeDto {}
+        record DateTypeDto(String format, List<String> examples) implements SpecTypeDto {}
 
-        record TimeTypeDto(String format) implements SpecTypeDto {}
+        record TimeTypeDto(String format, List<String> examples) implements SpecTypeDto {}
 
-        record DateTimeTypeDto(String format) implements SpecTypeDto {}
+        record DateTimeTypeDto(String format, List<String> examples) implements SpecTypeDto {}
 
-        record ObjectTypeDto() implements SpecTypeDto {}
+        record ObjectTypeDto(@Valid List<SpecPropertyDto> children) implements SpecTypeDto {}
 
         record ListTypeDto(
                 @Positive Integer minItems,
@@ -80,8 +85,6 @@ public record SpecModelDto(
             @NotNull @Pattern(regexp = "^\\w+$") String name,
             @Valid @NotNull SpecTypeDto type,
             @NotNull Boolean required,
-            @Valid List<SpecPropertyDto> children,
             String description,
-            List<String> examples,
             Boolean deprecated) {}
 }

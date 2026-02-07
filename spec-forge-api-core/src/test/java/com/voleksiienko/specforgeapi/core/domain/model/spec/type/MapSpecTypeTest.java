@@ -1,5 +1,6 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import static com.voleksiienko.specforgeapi.core.TestHelper.buildObjectSpecTypeSample;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +25,7 @@ class MapSpecTypeTest {
     void shouldReturnTrueForIsObjectStructureIfValueTypeIsObject() {
         var type = MapSpecType.builder()
                 .keyType(StringSpecType.builder().build())
-                .valueType(new ObjectSpecType())
+                .valueType(buildObjectSpecTypeSample())
                 .build();
         assertThat(type.isObjectStructure()).isTrue();
     }
@@ -59,7 +60,7 @@ class MapSpecTypeTest {
         var enumType = EnumSpecType.builder().values(Set.of("X")).build();
         var map = MapSpecType.builder()
                 .keyType(enumType)
-                .valueType(new BooleanSpecType())
+                .valueType(BooleanSpecType.builder().build())
                 .build();
         assertThat(map).isNotNull();
     }
@@ -68,7 +69,7 @@ class MapSpecTypeTest {
     void shouldThrowIfNestedMaps() {
         var innerMap = MapSpecType.builder()
                 .keyType(StringSpecType.builder().build())
-                .valueType(new BooleanSpecType())
+                .valueType(BooleanSpecType.builder().build())
                 .build();
         MapSpecType.Builder builder =
                 MapSpecType.builder().keyType(StringSpecType.builder().build()).valueType(innerMap);

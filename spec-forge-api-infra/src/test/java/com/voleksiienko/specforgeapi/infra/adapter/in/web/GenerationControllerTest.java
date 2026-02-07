@@ -81,7 +81,7 @@ class GenerationControllerTest {
                         .wrapperType(SpecModel.WrapperType.OBJECT)
                         .properties(List.of(SpecProperty.builder()
                                 .name("active")
-                                .type(new BooleanSpecType())
+                                .type(BooleanSpecType.builder().build())
                                 .build()))
                         .build(),
                 List.of());

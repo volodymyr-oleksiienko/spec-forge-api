@@ -56,7 +56,7 @@ public final class SpecModel {
             if (Asserts.isEmpty(properties)) {
                 throw new SpecModelValidationException("SpecModel must contain at least one node");
             }
-            ensurePropertiesUniqueness(properties, "SpecModel");
+            ensurePropertiesUniqueness(properties);
             properties = List.copyOf(properties);
             return new SpecModel(this);
         }

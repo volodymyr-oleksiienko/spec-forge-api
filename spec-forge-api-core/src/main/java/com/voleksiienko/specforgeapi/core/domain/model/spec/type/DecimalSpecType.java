@@ -1,10 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
+import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
-public final class DecimalSpecType implements SpecType {
+public final class DecimalSpecType extends PrimitiveSpecType {
 
     public static final int MAX_SCALE = 100;
 
@@ -13,6 +15,7 @@ public final class DecimalSpecType implements SpecType {
     private final BigDecimal maximum;
 
     private DecimalSpecType(Builder builder) {
+        super(builder.examples);
         this.scale = builder.scale;
         this.minimum = builder.minimum;
         this.maximum = builder.maximum;
@@ -20,11 +23,6 @@ public final class DecimalSpecType implements SpecType {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public boolean isObjectStructure() {
-        return false;
     }
 
     public int getScale() {
@@ -44,6 +42,7 @@ public final class DecimalSpecType implements SpecType {
         private int scale = 2;
         private BigDecimal minimum;
         private BigDecimal maximum;
+        private List<String> examples;
 
         public Builder scale(int scale) {
             this.scale = scale;
@@ -60,6 +59,11 @@ public final class DecimalSpecType implements SpecType {
             return this;
         }
 
+        public Builder examples(List<String> examples) {
+            this.examples = examples;
+            return this;
+        }
+
         public DecimalSpecType build() {
             if (scale < 0) {
                 throw new SpecModelValidationException("Scale [%s] cannot be negative".formatted(scale));
@@ -71,6 +75,9 @@ public final class DecimalSpecType implements SpecType {
             if (Objects.nonNull(minimum) && Objects.nonNull(maximum) && minimum.compareTo(maximum) > 0) {
                 throw new SpecModelValidationException(
                         "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
+            }
+            if (Asserts.isNotEmpty(examples)) {
+                examples = List.copyOf(examples);
             }
             return new DecimalSpecType(this);
         }

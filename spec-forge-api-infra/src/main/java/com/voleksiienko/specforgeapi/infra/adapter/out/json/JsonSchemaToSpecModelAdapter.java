@@ -58,9 +58,8 @@ public class JsonSchemaToSpecModelAdapter implements JsonSchemaToSpecModelPort {
 
     private SpecProperty mapToChildSafely(ParsingContext parsingContext, JsonSchemaParser.ChildDefinition def) {
         try {
-            SpecType specType = typeCreatorFacade.create(def.node(), parsingContext);
-            return propertyMapper.mapToNode(
-                    def, specType, specType.isObjectStructure() ? mapChildren(def.node(), parsingContext) : null);
+            SpecType specType = typeCreatorFacade.create(def.node(), parsingContext, this::mapChildren);
+            return propertyMapper.mapToNode(def, specType);
         } catch (Exception e) {
             parsingContext.addWarning(
                     "Fatal error in children mapping: " + e.getMessage(), JSON_SCHEMA_CHILDREN_MAPPING_FAILED);
