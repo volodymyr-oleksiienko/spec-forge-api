@@ -68,7 +68,7 @@ public class SpecModelToJsonSampleAdapter implements SpecModelToJsonSamplePort {
                 case DecimalSpecType ignored -> new BigDecimal(example);
                 default -> example;
             };
-        } catch (Exception e) {
+        } catch (Exception _) {
             return example;
         }
     }
