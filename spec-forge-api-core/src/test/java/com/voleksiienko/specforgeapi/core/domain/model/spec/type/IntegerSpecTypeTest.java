@@ -15,6 +15,7 @@ class IntegerSpecTypeTest {
         assertThat(type.getMinimum()).isEqualTo(1L);
         assertThat(type.getMaximum()).isEqualTo(10L);
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).containsExactlyInAnyOrder("1");
     }
 
     @Test

@@ -1,11 +1,12 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import java.util.List;
 import java.util.Objects;
 
 public final class DoubleSpecType extends PrimitiveSpecType {
+
+    private static final Double DEFAULT_EXAMPLE = 42.9832;
 
     private final Double minimum;
     private final Double maximum;
@@ -44,20 +45,25 @@ public final class DoubleSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public DoubleSpecType build() {
             if (Objects.nonNull(minimum) && Objects.nonNull(maximum) && minimum > maximum) {
                 throw new SpecModelValidationException(
                         "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
             }
-            if (Asserts.isNotEmpty(examples)) {
-                examples = List.copyOf(examples);
-            }
+            examples = List.of(generateExample());
             return new DoubleSpecType(this);
+        }
+
+        private String generateExample() {
+            Double exampleValue;
+            if (Objects.nonNull(minimum)) {
+                exampleValue = minimum;
+            } else if (Objects.nonNull(maximum)) {
+                exampleValue = maximum;
+            } else {
+                exampleValue = DEFAULT_EXAMPLE;
+            }
+            return String.valueOf(exampleValue);
         }
     }
 }

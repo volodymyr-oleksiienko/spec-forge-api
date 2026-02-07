@@ -31,9 +31,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
             ParsingContext parsingContext,
             List<String> examples,
             BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
-        return isEnum(node)
-                ? buildEnumNodeType(node, examples)
-                : buildStringOrTemporalNodeType(node, examples, parsingContext);
+        return isEnum(node) ? buildEnumNodeType(node) : buildStringOrTemporalNodeType(node, examples, parsingContext);
     }
 
     private boolean isEnum(JsonNode node) {
@@ -41,11 +39,8 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 && node.get("enum").valueStream().map(JsonNode::asString).anyMatch(Objects::nonNull);
     }
 
-    private SpecType buildEnumNodeType(JsonNode node, List<String> examples) {
-        return EnumSpecType.builder()
-                .values(getEnumValues(node))
-                .examples(examples)
-                .build();
+    private SpecType buildEnumNodeType(JsonNode node) {
+        return EnumSpecType.builder().values(getEnumValues(node)).build();
     }
 
     private Set<String> getEnumValues(JsonNode node) {
@@ -58,8 +53,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
 
     private SpecType buildStringOrTemporalNodeType(
             JsonNode node, List<String> examples, ParsingContext parsingContext) {
-        SpecType specType =
-                mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), examples, parsingContext);
+        SpecType specType = mapToTemporalNodeType(node.path(JSON_FORMAT_FIELD).asString(null), parsingContext);
         if (Objects.isNull(specType)) {
             return StringSpecType.builder()
                     .format(node.has(JSON_FORMAT_FIELD) ? getFormatIfSupported(node) : null)
@@ -79,7 +73,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                 : null;
     }
 
-    private SpecType mapToTemporalNodeType(String format, List<String> examples, ParsingContext parsingContext) {
+    private SpecType mapToTemporalNodeType(String format, ParsingContext parsingContext) {
         return switch (format) {
             case "date-time" -> {
                 String defaultFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -87,10 +81,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'date-time' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield DateTimeSpecType.builder()
-                        .format(defaultFormat)
-                        .examples(examples)
-                        .build();
+                yield DateTimeSpecType.builder().format(defaultFormat).build();
             }
             case "date" -> {
                 String defaultFormat = "yyyy-MM-dd";
@@ -98,10 +89,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'date' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield DateSpecType.builder()
-                        .format(defaultFormat)
-                        .examples(examples)
-                        .build();
+                yield DateSpecType.builder().format(defaultFormat).build();
             }
             case "time" -> {
                 String defaultFormat = "HH:mm:ss";
@@ -109,10 +97,7 @@ public class StringSpecTypeCreator implements SpecTypeCreator {
                         "Json format 'time' detected but no specific pattern provided, defaulting to ISO-8601: "
                                 + defaultFormat,
                         JSON_SCHEMA_TEMPORAL_FORMAT_DEFAULTED);
-                yield TimeSpecType.builder()
-                        .format(defaultFormat)
-                        .examples(examples)
-                        .build();
+                yield TimeSpecType.builder().format(defaultFormat).build();
             }
             case null, default -> null;
         };

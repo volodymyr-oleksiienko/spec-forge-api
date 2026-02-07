@@ -15,7 +15,7 @@ class SpecModelTest {
     void shouldBuildValidSpecModelWithObjectWrapper() {
         var prop = SpecProperty.builder()
                 .name("field1")
-                .type(BooleanSpecType.builder().build())
+                .type(new BooleanSpecType())
                 .build();
 
         var model = SpecModel.builder()
@@ -32,7 +32,7 @@ class SpecModelTest {
     void shouldBuildValidSpecModelWithListWrapper() {
         var prop = SpecProperty.builder()
                 .name("field1")
-                .type(BooleanSpecType.builder().build())
+                .type(new BooleanSpecType())
                 .build();
 
         var model = SpecModel.builder()
@@ -45,10 +45,7 @@ class SpecModelTest {
 
     @Test
     void shouldThrowExceptionWhenWrapperTypeIsMissing() {
-        var prop = SpecProperty.builder()
-                .name("f")
-                .type(BooleanSpecType.builder().build())
-                .build();
+        var prop = SpecProperty.builder().name("f").type(new BooleanSpecType()).build();
         var builder = SpecModel.builder().properties(List.of(prop));
 
         assertThatThrownBy(builder::build)
@@ -70,7 +67,7 @@ class SpecModelTest {
     void shouldThrowExceptionOnDuplicatePropertyNames() {
         var p1 = SpecProperty.builder()
                 .name("myField")
-                .type(BooleanSpecType.builder().build())
+                .type(new BooleanSpecType())
                 .build();
         var p2 = SpecProperty.builder()
                 .name("myField")

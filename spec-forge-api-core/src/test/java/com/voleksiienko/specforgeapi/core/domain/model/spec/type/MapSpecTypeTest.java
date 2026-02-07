@@ -60,7 +60,7 @@ class MapSpecTypeTest {
         var enumType = EnumSpecType.builder().values(Set.of("X")).build();
         var map = MapSpecType.builder()
                 .keyType(enumType)
-                .valueType(BooleanSpecType.builder().build())
+                .valueType(new BooleanSpecType())
                 .build();
         assertThat(map).isNotNull();
     }
@@ -69,7 +69,7 @@ class MapSpecTypeTest {
     void shouldThrowIfNestedMaps() {
         var innerMap = MapSpecType.builder()
                 .keyType(StringSpecType.builder().build())
-                .valueType(BooleanSpecType.builder().build())
+                .valueType(new BooleanSpecType())
                 .build();
         MapSpecType.Builder builder =
                 MapSpecType.builder().keyType(StringSpecType.builder().build()).valueType(innerMap);

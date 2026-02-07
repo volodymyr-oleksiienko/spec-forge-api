@@ -1,14 +1,15 @@
 package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
-import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
 public final class DecimalSpecType extends PrimitiveSpecType {
 
     public static final int MAX_SCALE = 100;
+    private static final BigDecimal DEFAULT_EXAMPLE = new BigDecimal("42");
 
     private final int scale;
     private final BigDecimal minimum;
@@ -59,11 +60,6 @@ public final class DecimalSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public DecimalSpecType build() {
             if (scale < 0) {
                 throw new SpecModelValidationException("Scale [%s] cannot be negative".formatted(scale));
@@ -76,10 +72,20 @@ public final class DecimalSpecType extends PrimitiveSpecType {
                 throw new SpecModelValidationException(
                         "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
             }
-            if (Asserts.isNotEmpty(examples)) {
-                examples = List.copyOf(examples);
-            }
+            examples = List.of(generatedExample());
             return new DecimalSpecType(this);
+        }
+
+        private String generatedExample() {
+            BigDecimal exampleValue;
+            if (Objects.nonNull(minimum)) {
+                exampleValue = minimum;
+            } else if (Objects.nonNull(maximum)) {
+                exampleValue = maximum;
+            } else {
+                exampleValue = DEFAULT_EXAMPLE;
+            }
+            return exampleValue.setScale(scale, RoundingMode.HALF_UP).toPlainString();
         }
     }
 }

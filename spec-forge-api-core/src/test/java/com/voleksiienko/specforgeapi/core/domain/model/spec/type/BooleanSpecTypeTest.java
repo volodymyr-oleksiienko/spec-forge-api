@@ -8,7 +8,8 @@ class BooleanSpecTypeTest {
 
     @Test
     void shouldHaveFalseObjectStructureFlag() {
-        var type = BooleanSpecType.builder().build();
+        var type = new BooleanSpecType();
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).containsExactlyInAnyOrder(Boolean.TRUE.toString(), Boolean.FALSE.toString());
     }
 }

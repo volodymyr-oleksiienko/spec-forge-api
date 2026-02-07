@@ -33,24 +33,23 @@ public final class DateSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public DateSpecType build() {
             if (Asserts.isBlank(format)) {
                 throw new SpecModelValidationException("Date format cannot be empty");
             }
+            DateTimeFormatter formatter = getFormatter();
+            examples = List.of(formatter.format(LocalDate.now()));
+            return new DateSpecType(this);
+        }
+
+        private DateTimeFormatter getFormatter() {
             try {
-                DateTimeFormatter.ofPattern(format).format(LocalDate.now());
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format);
+                dateTimeFormatter.format(LocalDate.now());
+                return dateTimeFormatter;
             } catch (Exception e) {
                 throw new SpecModelValidationException("Invalid Date format pattern: %s".formatted(format), e);
             }
-            if (Asserts.isNotEmpty(examples)) {
-                examples = List.copyOf(examples);
-            }
-            return new DateSpecType(this);
         }
     }
 }

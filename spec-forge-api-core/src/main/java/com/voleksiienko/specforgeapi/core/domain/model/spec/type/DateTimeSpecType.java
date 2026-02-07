@@ -2,6 +2,7 @@ package com.voleksiienko.specforgeapi.core.domain.model.spec.type;
 
 import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,24 +34,50 @@ public final class DateTimeSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public DateTimeSpecType build() {
             if (Asserts.isBlank(format)) {
                 throw new SpecModelValidationException("DateTime format cannot be empty");
             }
-            try {
-                DateTimeFormatter.ofPattern(format).format(OffsetDateTime.now());
-            } catch (Exception e) {
-                throw new SpecModelValidationException("Invalid DateTime format pattern: [%s]".formatted(format), e);
-            }
-            if (Asserts.isNotEmpty(examples)) {
-                examples = List.copyOf(examples);
-            }
+            DateTimeFormatter formatter = getFormatter();
+            examples = List.of(generateExample(formatter));
             return new DateTimeSpecType(this);
+        }
+
+        private DateTimeFormatter getFormatter() {
+            DateTimeFormatter dateTimeFormatter;
+            try {
+                dateTimeFormatter = DateTimeFormatter.ofPattern(format);
+            } catch (IllegalArgumentException e) {
+                throw new SpecModelValidationException(
+                        "Invalid DateTime format pattern syntax: [%s]".formatted(format), e);
+            }
+
+            try {
+                dateTimeFormatter.format(OffsetDateTime.now());
+                return dateTimeFormatter;
+            } catch (Exception ignored) {
+            }
+
+            try {
+                dateTimeFormatter.format(LocalDateTime.now());
+                return dateTimeFormatter;
+            } catch (Exception e) {
+                throw new SpecModelValidationException(
+                        "Format [%s] is not compatible with supported DateTime types".formatted(format), e);
+            }
+        }
+
+        private String generateExample(DateTimeFormatter dateTimeFormatter) {
+            try {
+                return dateTimeFormatter.format(OffsetDateTime.now());
+            } catch (Exception e1) {
+                try {
+                    return dateTimeFormatter.format(LocalDateTime.now());
+                } catch (Exception e2) {
+                    throw new SpecModelValidationException(
+                            "Format [%s] is not compatible with supported DateTime types".formatted(format), e2);
+                }
+            }
         }
     }
 }

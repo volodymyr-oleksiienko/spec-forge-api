@@ -20,6 +20,7 @@ class DecimalSpecTypeTest {
         assertThat(type.getScale()).isEqualTo(5);
         assertThat(type.getMinimum()).isEqualTo(new BigDecimal("10.50"));
         assertThat(type.getMaximum()).isEqualTo(new BigDecimal("20.50"));
+        assertThat(type.getExamples()).containsExactlyInAnyOrder("10.50000");
         assertThat(type.isObjectStructure()).isFalse();
     }
 

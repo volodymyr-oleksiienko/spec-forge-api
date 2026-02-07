@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public final class IntegerSpecType extends PrimitiveSpecType {
 
+    private static final Long DEFAULT_EXAMPLE = 56L;
+
     private final Long minimum;
     private final Long maximum;
 
@@ -43,17 +45,25 @@ public final class IntegerSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public IntegerSpecType build() {
             if (Objects.nonNull(minimum) && Objects.nonNull(maximum) && minimum > maximum) {
                 throw new SpecModelValidationException(
                         "Minimum [%s] cannot be greater than Maximum [%s]".formatted(minimum, maximum));
             }
+            examples = List.of(generateExample());
             return new IntegerSpecType(this);
+        }
+
+        private String generateExample() {
+            Long exampleValue;
+            if (Objects.nonNull(minimum)) {
+                exampleValue = minimum;
+            } else if (Objects.nonNull(maximum)) {
+                exampleValue = maximum;
+            } else {
+                exampleValue = DEFAULT_EXAMPLE;
+            }
+            return String.valueOf(exampleValue);
         }
     }
 }

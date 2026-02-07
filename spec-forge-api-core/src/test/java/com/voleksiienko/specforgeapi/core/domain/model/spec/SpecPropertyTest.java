@@ -17,9 +17,7 @@ class SpecPropertyTest {
     void shouldBuildValidPrimitiveProperty() {
         var prop = SpecProperty.builder()
                 .name("isActive")
-                .type(BooleanSpecType.builder()
-                        .examples(List.of("true", "false"))
-                        .build())
+                .type(new BooleanSpecType())
                 .required(true)
                 .description("Active status")
                 .deprecated(true)
@@ -37,7 +35,7 @@ class SpecPropertyTest {
     void shouldBuildValidObjectPropertyWithChildren() {
         var child = SpecProperty.builder()
                 .name("childId")
-                .type(BooleanSpecType.builder().build())
+                .type(new BooleanSpecType())
                 .build();
 
         var parent = SpecProperty.builder()
@@ -52,7 +50,7 @@ class SpecPropertyTest {
 
     @Test
     void shouldThrowWhenNameIsMissing() {
-        var builder = SpecProperty.builder().type(BooleanSpecType.builder().build());
+        var builder = SpecProperty.builder().type(new BooleanSpecType());
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
@@ -79,14 +77,10 @@ class SpecPropertyTest {
 
     @Test
     void shouldThrowOnDuplicateChildNames() {
-        var child1 = SpecProperty.builder()
-                .name("dup")
-                .type(BooleanSpecType.builder().build())
-                .build();
-        var child2 = SpecProperty.builder()
-                .name("dup")
-                .type(BooleanSpecType.builder().build())
-                .build();
+        var child1 =
+                SpecProperty.builder().name("dup").type(new BooleanSpecType()).build();
+        var child2 =
+                SpecProperty.builder().name("dup").type(new BooleanSpecType()).build();
 
         var builder = ObjectSpecType.builder().children(List.of(child1, child2));
 

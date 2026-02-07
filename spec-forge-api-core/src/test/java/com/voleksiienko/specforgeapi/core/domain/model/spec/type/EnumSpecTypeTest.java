@@ -11,9 +11,11 @@ class EnumSpecTypeTest {
 
     @Test
     void shouldBuildValidEnum() {
-        var type = EnumSpecType.builder().values(Set.of("A", "B")).build();
-        assertThat(type.getValues()).containsExactlyInAnyOrder("A", "B");
+        var values = Set.of("A", "B", "C");
+        var type = EnumSpecType.builder().values(values).build();
+        assertThat(type.getValues()).containsExactlyInAnyOrder("A", "B", "C");
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).hasSize(2).isSubsetOf(values);
     }
 
     @Test

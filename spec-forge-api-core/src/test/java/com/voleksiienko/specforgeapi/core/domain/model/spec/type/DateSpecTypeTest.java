@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Test;
 
 class DateSpecTypeTest {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
     @Test
     void shouldBuildValidDateType() {
-        var type = DateSpecType.builder().format("yyyy-MM-dd").build();
-        assertThat(type.getFormat()).isEqualTo("yyyy-MM-dd");
+        var type = DateSpecType.builder().format(DATE_FORMAT).build();
+        assertThat(type.getFormat()).isEqualTo(DATE_FORMAT);
         assertThat(type.isObjectStructure()).isFalse();
+        assertThat(type.getExamples()).hasSize(1).first().asString().matches("^\\d{4}-\\d{2}-\\d{2}$");
     }
 
     @Test

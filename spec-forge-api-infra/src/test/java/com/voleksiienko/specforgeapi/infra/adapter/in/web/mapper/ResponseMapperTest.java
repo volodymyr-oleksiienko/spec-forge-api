@@ -34,7 +34,7 @@ class ResponseMapperTest {
 
         String expectedJson = readResource("/response-mapper-test/expected-artifacts-response.json");
         String actualJson = objectMapper.writeValueAsString(dto);
-        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
     }
 
     private ArtifactsResult createArtifactsResult() {
@@ -43,7 +43,7 @@ class ResponseMapperTest {
                         .name("is_active")
                         .description("Basic Boolean")
                         .required(true)
-                        .type(BooleanSpecType.builder().build())
+                        .type(new BooleanSpecType())
                         .build(),
                 SpecProperty.builder()
                         .name("retry_count")

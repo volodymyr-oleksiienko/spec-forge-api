@@ -35,6 +35,6 @@ public class NumberSpecTypeCreator implements SpecTypeCreator {
         } else if (node.has("maximum")) {
             builder.maximum(node.get("maximum").asDouble());
         }
-        return builder.examples(examples).build();
+        return builder.build();
     }
 }

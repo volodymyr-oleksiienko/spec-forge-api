@@ -32,18 +32,11 @@ public final class EnumSpecType extends PrimitiveSpecType {
             return this;
         }
 
-        public Builder examples(List<String> examples) {
-            this.examples = examples;
-            return this;
-        }
-
         public EnumSpecType build() {
             if (Asserts.isEmpty(values)) {
                 throw new SpecModelValidationException("EnumNodeType must have at least one value");
             }
-            if (Asserts.isNotEmpty(examples)) {
-                examples = List.copyOf(examples);
-            }
+            examples = values.stream().limit(2).toList();
             values = Set.copyOf(values);
             return new EnumSpecType(this);
         }

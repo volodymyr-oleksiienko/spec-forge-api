@@ -35,6 +35,6 @@ public class IntegerSpecTypeCreator implements SpecTypeCreator {
         } else if (node.has("maximum")) {
             builder.maximum(node.get("maximum").asLong());
         }
-        return builder.examples(examples).build();
+        return builder.build();
     }
 }

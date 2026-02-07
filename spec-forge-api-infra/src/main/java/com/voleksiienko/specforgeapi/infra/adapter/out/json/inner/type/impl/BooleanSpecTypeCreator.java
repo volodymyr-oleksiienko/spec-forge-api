@@ -24,6 +24,6 @@ public class BooleanSpecTypeCreator implements SpecTypeCreator {
             ParsingContext parsingContext,
             List<String> examples,
             BiFunction<JsonNode, ParsingContext, List<SpecProperty>> propertyCreator) {
-        return BooleanSpecType.builder().examples(examples).build();
+        return new BooleanSpecType();
     }
 }
