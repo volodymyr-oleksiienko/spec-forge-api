@@ -133,6 +133,8 @@ class ResponseMapperTest {
                 .build();
 
         return new ArtifactsResult(
-                specModel, List.of(new Warning("Something happened", DomainErrorCode.SPEC_VALIDATION_FAILED)));
+                specModel,
+                "{\"field\": \"123\"}",
+                List.of(new Warning("Something happened", DomainErrorCode.SPEC_VALIDATION_FAILED)));
     }
 }

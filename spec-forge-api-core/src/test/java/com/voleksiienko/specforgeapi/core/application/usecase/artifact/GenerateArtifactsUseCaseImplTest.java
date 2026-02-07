@@ -11,6 +11,7 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.G
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSampleToJsonSchemaPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaToSpecModelPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaValidatorPort;
+import com.voleksiienko.specforgeapi.core.application.port.out.json.SpecModelToJsonSamplePort;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResult;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.Warning;
@@ -34,22 +35,29 @@ class GenerateArtifactsUseCaseImplTest {
     @Mock
     private JsonSampleToJsonSchemaPort sampleMapper;
 
+    @Mock
+    private SpecModelToJsonSamplePort jsonSampleGenerator;
+
     @InjectMocks
     private GenerateArtifactsUseCaseImpl useCase;
 
     @Test
     void shouldGenerateArtifactsFromJsonSchema() {
         var schema = "{}";
+        var expectedSample = "{\"field\": \"1\"}";
         var mockModel = mock(SpecModel.class);
         var warnings = List.of(new Warning("warning", JSON_SCHEMA_COMPOSITION_PROPERTY_MERGED));
         when(schemaParser.map(schema)).thenReturn(new ConversionResult(mockModel, warnings));
+        when(jsonSampleGenerator.map(mockModel)).thenReturn(expectedSample);
 
         var result = useCase.generateFromJsonSchema(new GenerateFromJsonSchemaCommand(schema));
 
         verify(jsonSchemaValidator).validate(schema);
         verify(schemaParser).map(schema);
+        verify(jsonSampleGenerator).map(mockModel);
         assertThat(result.specModel()).isEqualTo(mockModel);
         assertThat(result.warnings()).isEqualTo(warnings);
+        assertThat(result.jsonSample()).isEqualTo(expectedSample);
     }
 
     @Test
@@ -69,19 +77,23 @@ class GenerateArtifactsUseCaseImplTest {
 
     @Test
     void shouldGenerateArtifactsFromJsonSample() {
-        var sample = "{\"key\":\"val\"}";
+        var sample = "{\"field\":\"123\"}";
         var inferredSchema = "{\"type\":\"inferred\"}";
+        var expectedSample = "{\"field\": \"1\"}";
         var mockModel = mock(SpecModel.class);
         var warnings = List.of(new Warning("warning", JSON_SCHEMA_MAP_KEY_DEFAULTED_TO_STRING));
         when(sampleMapper.map(sample)).thenReturn(inferredSchema);
         when(schemaParser.map(inferredSchema)).thenReturn(new ConversionResult(mockModel, warnings));
+        when(jsonSampleGenerator.map(mockModel)).thenReturn(expectedSample);
 
         var result = useCase.generateFromJsonSample(new GenerateFromJsonSampleCommand(sample));
 
         verify(sampleMapper).map(sample);
         verify(schemaParser).map(inferredSchema);
         verify(jsonSchemaValidator, never()).validate(anyString());
+        verify(jsonSampleGenerator).map(mockModel);
         assertThat(result.specModel()).isEqualTo(mockModel);
         assertThat(result.warnings()).isEqualTo(warnings);
+        assertThat(result.jsonSample()).isEqualTo(expectedSample);
     }
 }

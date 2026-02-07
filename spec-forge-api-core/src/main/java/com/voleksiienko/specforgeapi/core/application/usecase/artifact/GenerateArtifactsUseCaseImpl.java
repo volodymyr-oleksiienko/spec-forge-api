@@ -8,6 +8,7 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.Ar
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSampleToJsonSchemaPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaToSpecModelPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaValidatorPort;
+import com.voleksiienko.specforgeapi.core.application.port.out.json.SpecModelToJsonSamplePort;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResult;
 
 @UseCase
@@ -16,14 +17,17 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
     private final JsonSchemaValidatorPort jsonSchemaValidator;
     private final JsonSchemaToSpecModelPort schemaParser;
     private final JsonSampleToJsonSchemaPort sampleMapper;
+    private final SpecModelToJsonSamplePort sampleGenerator;
 
     public GenerateArtifactsUseCaseImpl(
             JsonSchemaValidatorPort jsonSchemaValidator,
             JsonSchemaToSpecModelPort schemaParser,
-            JsonSampleToJsonSchemaPort sampleMapper) {
+            JsonSampleToJsonSchemaPort sampleMapper,
+            SpecModelToJsonSamplePort sampleGenerator) {
         this.jsonSchemaValidator = jsonSchemaValidator;
         this.schemaParser = schemaParser;
         this.sampleMapper = sampleMapper;
+        this.sampleGenerator = sampleGenerator;
     }
 
     @Override
@@ -41,6 +45,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
     }
 
     private ArtifactsResult processSpecModel(ConversionResult conversionResult) {
-        return new ArtifactsResult(conversionResult.model(), conversionResult.warnings());
+        String jsonSample = sampleGenerator.map(conversionResult.model());
+        return new ArtifactsResult(conversionResult.model(), jsonSample, conversionResult.warnings());
     }
 }

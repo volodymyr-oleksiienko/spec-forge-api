@@ -23,7 +23,7 @@ public class JsonSampleToJsonSchemaAdapter implements JsonSampleToJsonSchemaPort
         try {
             return JSON_SCHEMA_INFERRER
                     .inferForSample(OBJECT_MAPPER.readTree(jsonSample))
-                    .toPrettyString();
+                    .toString();
         } catch (Exception e) {
             throw new ConversionException(
                     "Failed to convert json sample to json schema", e, JSON_SAMPLE_PARSING_FAILED);
