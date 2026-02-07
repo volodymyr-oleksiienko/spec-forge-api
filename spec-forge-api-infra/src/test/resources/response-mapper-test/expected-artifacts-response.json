@@ -134,6 +134,7 @@
       }
     ]
   },
+  "jsonSample": "{\"field\": \"123\"}",
   "warnings": [
     {
       "devMessage": "Something happened",

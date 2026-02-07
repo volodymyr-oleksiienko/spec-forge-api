@@ -18,6 +18,10 @@ public final class EnumSpecType extends PrimitiveSpecType {
         return new Builder();
     }
 
+    public boolean isNumeric() {
+        return values.stream().allMatch(value -> value.matches("^//d+$"));
+    }
+
     public Set<String> getValues() {
         return values;
     }

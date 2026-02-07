@@ -84,6 +84,7 @@ class GenerationControllerTest {
                                 .type(new BooleanSpecType())
                                 .build()))
                         .build(),
+                "{\"active\": \"true\"}",
                 List.of());
 
         when(useCase.generateFromJsonSchema(any(GenerateFromJsonSchemaCommand.class)))
