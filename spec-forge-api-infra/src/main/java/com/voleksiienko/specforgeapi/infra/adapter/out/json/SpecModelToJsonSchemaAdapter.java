@@ -21,6 +21,10 @@ import tools.jackson.databind.node.ObjectNode;
 @Service
 public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
 
+    private static final String JSON_OBJECT_TYPE = "object";
+    private static final String JSON_STRING_TYPE = "string";
+    private static final String JSON_MINIMUM_FIELD = "minimum";
+    private static final String JSON_MAXIMUM_FIELD = "maximum";
     private static final JsonMapper JSON_MAPPER = JsonMapper.builder().build();
     private static final Map<StringSpecType.StringTypeFormat, String> STRING_FORMAT_MAPPER =
             Map.of(EMAIL, "email", UUID, "uuid");
@@ -34,11 +38,11 @@ public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
         if (SpecModel.WrapperType.LIST == specModel.getWrapperType()) {
             schema.put("type", "array");
             ObjectNode itemsSchema = JSON_MAPPER.createObjectNode();
-            itemsSchema.put("type", "object");
+            itemsSchema.put("type", JSON_OBJECT_TYPE);
             buildProperties(itemsSchema, specModel.getProperties());
             schema.set("items", itemsSchema);
         } else {
-            schema.put("type", "object");
+            schema.put("type", JSON_OBJECT_TYPE);
             buildProperties(schema, specModel.getProperties());
         }
         return schema.toString();
@@ -99,14 +103,14 @@ public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
 
     private void enrichSchemaWithType(ObjectNode schema, SpecType type) {
         switch (type) {
-            case BooleanSpecType ignored -> schema.put("type", "boolean");
+            case BooleanSpecType _ -> schema.put("type", "boolean");
             case IntegerSpecType t -> enrichInteger(schema, t);
             case DoubleSpecType t -> enrichDouble(schema, t);
             case DecimalSpecType t -> enrichDecimal(schema, t);
             case StringSpecType t -> enrichString(schema, t);
-            case DateSpecType ignored -> enrichTemporal(schema, "date");
-            case TimeSpecType ignored -> enrichTemporal(schema, "time");
-            case DateTimeSpecType ignored -> enrichTemporal(schema, "date-time");
+            case DateSpecType _ -> enrichTemporal(schema, "date");
+            case TimeSpecType _ -> enrichTemporal(schema, "time");
+            case DateTimeSpecType _ -> enrichTemporal(schema, "date-time");
             case EnumSpecType t -> enrichEnum(schema, t);
             case ObjectSpecType t -> enrichObject(schema, t);
             case ListSpecType t -> enrichList(schema, t);
@@ -116,35 +120,35 @@ public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
 
     private void enrichInteger(ObjectNode schema, IntegerSpecType t) {
         schema.put("type", "integer");
-        setValue(schema, "minimum", t.getMinimum());
-        setValue(schema, "maximum", t.getMaximum());
+        setValue(schema, JSON_MINIMUM_FIELD, t.getMinimum());
+        setValue(schema, JSON_MAXIMUM_FIELD, t.getMaximum());
     }
 
     private void enrichDouble(ObjectNode schema, DoubleSpecType t) {
         schema.put("type", "number");
-        setValue(schema, "minimum", t.getMinimum());
-        setValue(schema, "maximum", t.getMaximum());
+        setValue(schema, JSON_MINIMUM_FIELD, t.getMinimum());
+        setValue(schema, JSON_MAXIMUM_FIELD, t.getMaximum());
     }
 
     private void enrichDecimal(ObjectNode schema, DecimalSpecType t) {
         schema.put("type", "number");
-        setValue(schema, "minimum", t.getMinimum());
-        setValue(schema, "maximum", t.getMaximum());
+        setValue(schema, JSON_MINIMUM_FIELD, t.getMinimum());
+        setValue(schema, JSON_MAXIMUM_FIELD, t.getMaximum());
     }
 
     private void enrichTemporal(ObjectNode schema, String format) {
-        schema.put("type", "string");
+        schema.put("type", JSON_STRING_TYPE);
         schema.put("format", format);
     }
 
     private void enrichEnum(ObjectNode schema, EnumSpecType t) {
-        schema.put("type", "string");
+        schema.put("type", JSON_STRING_TYPE);
         ArrayNode enumArr = schema.putArray("enum");
         t.getValues().forEach(enumArr::add);
     }
 
     private void enrichString(ObjectNode schema, StringSpecType t) {
-        schema.put("type", "string");
+        schema.put("type", JSON_STRING_TYPE);
         setValue(schema, "pattern", t.getPattern());
         setValue(schema, "minLength", t.getMinLength());
         setValue(schema, "maxLength", t.getMaxLength());
@@ -153,7 +157,7 @@ public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
     }
 
     private void enrichObject(ObjectNode schema, ObjectSpecType t) {
-        schema.put("type", "object");
+        schema.put("type", JSON_OBJECT_TYPE);
         buildProperties(schema, t.getChildren());
     }
 
@@ -167,7 +171,7 @@ public class SpecModelToJsonSchemaAdapter implements SpecModelToJsonSchemaPort {
     }
 
     private void enrichMap(ObjectNode schema, MapSpecType t) {
-        schema.put("type", "object");
+        schema.put("type", JSON_OBJECT_TYPE);
         ObjectNode valueSchema = JSON_MAPPER.createObjectNode();
         enrichSchemaWithType(valueSchema, t.getValueType());
         schema.set("additionalProperties", valueSchema);
