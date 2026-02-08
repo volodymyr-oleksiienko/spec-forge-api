@@ -4,4 +4,4 @@ import com.voleksiienko.specforgeapi.core.domain.model.conversion.Warning;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import java.util.List;
 
-public record ArtifactsResult(SpecModel specModel, String jsonSample, List<Warning> warnings) {}
+public record ArtifactsResult(SpecModel specModel, String jsonSample, String jsonSchema, List<Warning> warnings) {}

@@ -5,10 +5,7 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.GenerateA
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSampleCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSchemaCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.ArtifactsResult;
-import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSampleToJsonSchemaPort;
-import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaToSpecModelPort;
-import com.voleksiienko.specforgeapi.core.application.port.out.json.JsonSchemaValidatorPort;
-import com.voleksiienko.specforgeapi.core.application.port.out.json.SpecModelToJsonSamplePort;
+import com.voleksiienko.specforgeapi.core.application.port.out.json.*;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResult;
 
 @UseCase
@@ -18,16 +15,19 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
     private final JsonSchemaToSpecModelPort schemaParser;
     private final JsonSampleToJsonSchemaPort sampleMapper;
     private final SpecModelToJsonSamplePort sampleGenerator;
+    private final SpecModelToJsonSchemaPort schemaGenerator;
 
     public GenerateArtifactsUseCaseImpl(
             JsonSchemaValidatorPort jsonSchemaValidator,
             JsonSchemaToSpecModelPort schemaParser,
             JsonSampleToJsonSchemaPort sampleMapper,
-            SpecModelToJsonSamplePort sampleGenerator) {
+            SpecModelToJsonSamplePort sampleGenerator,
+            SpecModelToJsonSchemaPort schemaGenerator) {
         this.jsonSchemaValidator = jsonSchemaValidator;
         this.schemaParser = schemaParser;
         this.sampleMapper = sampleMapper;
         this.sampleGenerator = sampleGenerator;
+        this.schemaGenerator = schemaGenerator;
     }
 
     @Override
@@ -46,6 +46,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
 
     private ArtifactsResult processSpecModel(ConversionResult conversionResult) {
         String jsonSample = sampleGenerator.map(conversionResult.model());
-        return new ArtifactsResult(conversionResult.model(), jsonSample, conversionResult.warnings());
+        String jsonSchema = schemaGenerator.map(conversionResult.model());
+        return new ArtifactsResult(conversionResult.model(), jsonSample, jsonSchema, conversionResult.warnings());
     }
 }
