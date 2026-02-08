@@ -8,19 +8,13 @@ import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 class SpecModelToJsonSampleAdapterTest {
 
-    private SpecModelToJsonSampleAdapter adapter;
-
-    @BeforeEach
-    void setUp() {
-        adapter = new SpecModelToJsonSampleAdapter();
-    }
+    private final SpecModelToJsonSampleAdapter adapter = new SpecModelToJsonSampleAdapter();
 
     @Test
     void shouldGenerateJsonFromPrimitivesWithExamples() throws Exception {
@@ -165,12 +159,12 @@ class SpecModelToJsonSampleAdapterTest {
         String json = adapter.map(specModel);
 
         String expectedJson = """
-                [
-                  {
-                    "itemName": "example-item"
-                  }
-                ]
-                """;
+            [
+              {
+                "itemName": "example-item"
+              }
+            ]
+            """;
         JSONAssert.assertEquals(expectedJson, json, JSONCompareMode.STRICT);
     }
 

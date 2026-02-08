@@ -135,6 +135,7 @@ class ResponseMapperTest {
         return new ArtifactsResult(
                 specModel,
                 "{\"field\": \"123\"}",
+                "{\"type\": \"object\", \"properties\": { \"active\" : \"boolean\" }}",
                 List.of(new Warning("Something happened", DomainErrorCode.SPEC_VALIDATION_FAILED)));
     }
 }

@@ -135,6 +135,7 @@
     ]
   },
   "jsonSample": "{\"field\": \"123\"}",
+  "jsonSchema": "{\"type\": \"object\", \"properties\": { \"active\" : \"boolean\" }}",
   "warnings": [
     {
       "devMessage": "Something happened",
