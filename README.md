@@ -24,7 +24,7 @@ This project is currently under **active development**.
 
 - ✅ Core Domain Logic (IR & Transformations)
 - ✅ REST API Adapters (Schema & Sample generation)
-- 🚧 Json Sample/Json Schema Generators (In Progress)
+- ✅ Json Sample/Json Schema Generators (In Progress)
 - 🚧 Java/TypeScript Code Generators (In Progress)
 
 ---
@@ -110,6 +110,62 @@ Returns the standardized SpecModel and any warnings.
   }
 }
 ```
+
+---
+
+## 🛠 How it Works
+
+```mermaid
+graph LR
+    subgraph "Inputs formats"
+        subgraph "Prepared"
+            D[Spec Model]
+        end
+
+        subgraph "Raw"
+            A[JSON Sample]
+            B[JSON Schema]
+        end
+    end
+
+    subgraph "The Forge"
+        A -->|one of| P
+        B -->|one of| P
+        P[Parser]
+        D -->|one of| G
+        P -->|Spec Model| G
+        G[Generator]
+    end
+
+    subgraph "Output formats"
+        J[Java Records / POJOs]
+        T[TypeScript Interfaces]
+        IR[Spec Model]
+        JE[JSON Sample]
+        JS[JSON Schema]
+        HT[HTML Table]
+    end
+
+    G -->|one of| J
+    G -->|one of| T
+    G --> JE
+    G --> JS
+    G --> HT
+    G --> IR
+
+```
+
+---
+
+## 🔄 Conversion Matrix
+
+| Source Format               | Ingest (to SpecModel) | Generate (from SpecModel) |
+|:----------------------------|:---------------------:|:-------------------------:|
+| **JSON Example**            |           ✅           |             ✅             |
+| **JSON Schema**             |           ✅           |             ✅             |
+| **Java (Records/POJOs)**    |           ❌           |            🚧             |
+| **TypeScript (Interfaces)** |           ❌           |            🚧             |
+| **HTML Table**              |           ❌           |            🚧             |
 
 ---
 
