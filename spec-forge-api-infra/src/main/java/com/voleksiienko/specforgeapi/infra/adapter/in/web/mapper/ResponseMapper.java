@@ -18,7 +18,7 @@ public class ResponseMapper {
     public ArtifactsResponse map(ArtifactsResult result) {
         List<ArtifactsResponse.Warning> warnings = mapWarnings(result);
         SpecModelDto specModelDto = mapSpecModel(result.specModel());
-        return new ArtifactsResponse(specModelDto, result.jsonSample(), result.jsonSchema(), warnings);
+        return new ArtifactsResponse(specModelDto, result.jsonSample(), result.jsonSchema(), result.code(), warnings);
     }
 
     private List<ArtifactsResponse.Warning> mapWarnings(ArtifactsResult result) {
