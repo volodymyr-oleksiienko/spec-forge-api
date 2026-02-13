@@ -1,5 +1,16 @@
 package com.voleksiienko.specforgeapi.core.application.service.java;
 
+import static com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig.Fields.SortType.AS_IS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Serialization.JsonPropertyMode.ALWAYS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.CLASS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.RECORD;
+import static com.voleksiienko.specforgeapi.core.domain.model.spec.type.StringSpecType.StringTypeFormat.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaTypeToFingerprintPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.util.StringInflectorPort;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.*;
@@ -16,23 +27,11 @@ import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig.Fields.SortType.AS_IS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Serialization.JsonPropertyMode.ALWAYS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.CLASS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.RECORD;
-import static com.voleksiienko.specforgeapi.core.domain.model.spec.type.StringSpecType.StringTypeFormat.UUID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class SpecModelToJavaModelMapperTest {
 
