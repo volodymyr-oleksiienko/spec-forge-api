@@ -16,6 +16,7 @@ class ArtifactsResultTest {
 
     private final SpecModel mockSpec = mock(SpecModel.class);
     private final Warning warning = mock(Warning.class);
+    private final List<Warning> warnings = List.of(warning);
 
     @Test
     void shouldCreateResult() {
@@ -31,7 +32,7 @@ class ArtifactsResultTest {
 
     @Test
     void shouldFailOnNullSpec() {
-        assertThatThrownBy(() -> new ArtifactsResult(null, "{}", "{}", "code", List.of(warning)))
+        assertThatThrownBy(() -> new ArtifactsResult(null, "{}", "{}", "code", warnings))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("specModel is mandatory");
     }
@@ -40,10 +41,10 @@ class ArtifactsResultTest {
     @NullSource
     @ValueSource(strings = {"", "   "})
     void shouldFailOnBlankJsonArtifacts(String blank) {
-        assertThatThrownBy(() -> new ArtifactsResult(mockSpec, blank, "{}", "code", List.of(warning)))
+        assertThatThrownBy(() -> new ArtifactsResult(mockSpec, blank, "{}", "code", warnings))
                 .isInstanceOf(RuntimeException.class);
 
-        assertThatThrownBy(() -> new ArtifactsResult(mockSpec, "{}", blank, "code", List.of(warning)))
+        assertThatThrownBy(() -> new ArtifactsResult(mockSpec, "{}", blank, "code", warnings))
                 .isInstanceOf(RuntimeException.class);
     }
 

@@ -91,9 +91,7 @@ class JavaModelToJavaCodeAdapterTest {
 
             String code = adapter.map(root);
 
-            assertThat(code)
-                    .contains("public class Outer {")
-                    .contains("  public static class Inner {"); // todo use Inner as field type
+            assertThat(code).contains("public class Outer {").contains("  public static class Inner {");
         }
 
         @Test
@@ -240,9 +238,9 @@ class JavaModelToJavaCodeAdapterTest {
         void shouldMapRecordComponentAnnotations() {
             JavaAnnotation notNull = createAnnotation("jakarta.validation", "NotNull", null);
             JavaField field = createField("email", createType("java.lang", "String", false), List.of(notNull));
-            JavaClass record = JavaClass.createRecord("User", null, List.of(field));
+            JavaClass recordClass = JavaClass.createRecord("User", null, List.of(field));
 
-            String code = adapter.map(record);
+            String code = adapter.map(recordClass);
 
             assertThat(code).contains("(@NotNull String email)");
         }

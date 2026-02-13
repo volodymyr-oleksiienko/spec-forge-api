@@ -51,7 +51,7 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
         }
 
         if (isNotEmpty(javaType.getAnnotations())) {
-            javaType.getAnnotations().forEach((annotation) -> builder.addAnnotation(resolveAnnotation(annotation)));
+            javaType.getAnnotations().forEach(annotation -> builder.addAnnotation(resolveAnnotation(annotation)));
         }
 
         return builder.build();
@@ -81,7 +81,7 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
                     if (isNotEmpty(javaField.getAnnotations())) {
                         javaField
                                 .getAnnotations()
-                                .forEach((annotation) -> fieldBuilder.addAnnotation(resolveAnnotation(annotation)));
+                                .forEach(annotation -> fieldBuilder.addAnnotation(resolveAnnotation(annotation)));
                     }
                     builder.addField(fieldBuilder.build());
                 }));
@@ -95,7 +95,7 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
             if (isNotEmpty(javaField.getAnnotations())) {
                 javaField
                         .getAnnotations()
-                        .forEach((annotation) -> parameter.addAnnotation(resolveAnnotation(annotation)));
+                        .forEach(annotation -> parameter.addAnnotation(resolveAnnotation(annotation)));
             }
             constructorBuilder.addParameter(parameter.build());
         });
@@ -109,7 +109,7 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
             if (isNotEmpty(javaField.getAnnotations())) {
                 javaField
                         .getAnnotations()
-                        .forEach((annotation) -> fieldBuilder.addAnnotation(resolveAnnotation(annotation)));
+                        .forEach(annotation -> fieldBuilder.addAnnotation(resolveAnnotation(annotation)));
             }
             builder.addField(fieldBuilder.build());
         });
@@ -117,7 +117,7 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
 
     private void addNestedJavaTypes(JavaClass javaClass, TypeSpec.Builder builder) {
         if (isNotEmpty(javaClass.getNestedClasses())) {
-            javaClass.getNestedClasses().forEach((nestedClass) -> builder.addType(buildTypeSpec(nestedClass, false)));
+            javaClass.getNestedClasses().forEach(nestedClass -> builder.addType(buildTypeSpec(nestedClass, false)));
         }
     }
 

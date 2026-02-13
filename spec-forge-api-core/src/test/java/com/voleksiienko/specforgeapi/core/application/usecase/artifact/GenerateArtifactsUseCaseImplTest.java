@@ -64,7 +64,7 @@ class GenerateArtifactsUseCaseImplTest {
     private GenerateArtifactsUseCaseImpl useCase;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         when(schemaParser.map(jsonSchema)).thenReturn(new ConversionResult(mockModel, warnings));
         when(sampleMapper.map(jsonSample)).thenReturn(jsonSchema);
         when(jsonSampleGenerator.map(mockModel)).thenReturn(jsonSample);

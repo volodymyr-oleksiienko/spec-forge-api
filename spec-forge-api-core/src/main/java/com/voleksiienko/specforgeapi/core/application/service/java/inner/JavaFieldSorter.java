@@ -19,7 +19,9 @@ public class JavaFieldSorter {
         switch (config.base().fields().sort()) {
             case ALPHABETICAL -> sortedFields.sort(Comparator.comparing(JavaField::getName));
             case REQUIRED_FIRST -> sortedFields.sort(Comparator.comparingInt(this::getFieldWeight));
-            case AS_IS -> {}
+            case AS_IS -> {
+                // natural sorting used
+            }
         }
         return sortedFields;
     }

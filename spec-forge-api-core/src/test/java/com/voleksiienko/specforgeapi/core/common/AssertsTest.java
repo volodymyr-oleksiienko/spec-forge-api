@@ -1,7 +1,6 @@
 package com.voleksiienko.specforgeapi.core.common;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -140,7 +139,8 @@ class AssertsTest {
 
         @Test
         void shouldDoNothingWhenStringIsNotBlank() {
-            Asserts.requireNotBlank("valid", "Error message");
+            assertThatCode(() -> Asserts.requireNotBlank("valid", "Error message"))
+                    .doesNotThrowAnyException();
         }
 
         @Test

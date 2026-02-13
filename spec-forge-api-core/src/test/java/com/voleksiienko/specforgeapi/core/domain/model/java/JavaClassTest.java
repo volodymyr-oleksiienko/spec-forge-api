@@ -30,10 +30,10 @@ class JavaClassTest {
 
     @Test
     void shouldCreateRecord() {
-        var record = JavaClass.createRecord("UserRecord", annotations, fields);
+        var recordClass = JavaClass.createRecord("UserRecord", annotations, fields);
 
-        assertThat(record.getName()).isEqualTo("UserRecord");
-        assertThat(record.isRecord()).isTrue();
+        assertThat(recordClass.getName()).isEqualTo("UserRecord");
+        assertThat(recordClass.isRecord()).isTrue();
     }
 
     @Test
@@ -59,7 +59,8 @@ class JavaClassTest {
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("Java class fields cannot be empty");
 
-        assertThatThrownBy(() -> JavaClass.createClass("User", annotations, List.of()))
+        List<JavaField> javaFields = List.of();
+        assertThatThrownBy(() -> JavaClass.createClass("User", annotations, javaFields))
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("Java class fields cannot be empty");
     }

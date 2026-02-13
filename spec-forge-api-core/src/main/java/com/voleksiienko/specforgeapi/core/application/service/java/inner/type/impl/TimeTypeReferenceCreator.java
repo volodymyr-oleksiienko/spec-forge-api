@@ -36,7 +36,7 @@ public class TimeTypeReferenceCreator implements TypeReferenceCreator {
         try {
             LocalTime.now().format(DateTimeFormatter.ofPattern(pattern));
             return true;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }

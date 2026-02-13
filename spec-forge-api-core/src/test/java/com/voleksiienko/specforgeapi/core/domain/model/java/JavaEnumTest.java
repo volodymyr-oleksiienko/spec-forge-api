@@ -28,7 +28,8 @@ class JavaEnumTest {
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("JavaEnum must have at least one constant");
 
-        assertThatThrownBy(() -> JavaEnum.of("Status", null, null, List.of()))
+        List<JavaEnumConstant> javaEnumConstants = List.of();
+        assertThatThrownBy(() -> JavaEnum.of("Status", null, null, javaEnumConstants))
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("JavaEnum must have at least one constant");
     }

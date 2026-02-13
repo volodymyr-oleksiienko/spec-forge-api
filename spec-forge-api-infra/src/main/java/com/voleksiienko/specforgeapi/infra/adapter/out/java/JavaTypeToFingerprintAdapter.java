@@ -13,7 +13,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Component
 public class JavaTypeToFingerprintAdapter implements JavaTypeToFingerprintPort {
 
-    private final JsonMapper JSON_MAPPER = JsonMapper.builder()
+    private static final JsonMapper JSON_MAPPER = JsonMapper.builder()
             .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
             .addMixIn(JavaType.class, IgnoreNameMixin.class)
             .build();
