@@ -107,7 +107,9 @@ Returns the standardized SpecModel and any warnings.
         "required": false
       }
     ]
-  }
+  },
+  "jsonSample": "{\"id\": \"1\"}",
+  "jsonSchema": "{\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"type\": \"object\", \"properties\": { \"id\": { \"type\": \"string\" } } }"
 }
 ```
 
@@ -163,9 +165,8 @@ graph LR
 |:----------------------------|:---------------------:|:-------------------------:|
 | **JSON Example**            |           ✅           |             ✅             |
 | **JSON Schema**             |           ✅           |             ✅             |
-| **Java (Records/POJOs)**    |           ❌           |            🚧             |
+| **Java (Records/POJOs)**    |           ❌           |             ✅             |
 | **TypeScript (Interfaces)** |           ❌           |            🚧             |
-| **HTML Table**              |           ❌           |            🚧             |
 
 ---
 

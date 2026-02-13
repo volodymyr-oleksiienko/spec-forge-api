@@ -1,10 +1,12 @@
 package com.voleksiienko.specforgeapi.infra.adapter.in.web;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.error.DomainErrorCode.SPEC_VALIDATION_FAILED;
+import static com.voleksiienko.specforgeapi.core.domain.model.error.DomainErrorCode.*;
 import static com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ApiErrorCode.INTERNAL;
 import static com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ApiErrorCode.INVALID_REQUEST_FORMAT;
 
 import com.voleksiienko.specforgeapi.core.application.exception.ConversionException;
+import com.voleksiienko.specforgeapi.core.domain.exception.ConfigValidationException;
+import com.voleksiienko.specforgeapi.core.domain.exception.JavaModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +60,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SpecModelValidationException.class)
     public ErrorResponse handle(SpecModelValidationException e) {
         log.error(e.getMessage(), e);
-        return new ErrorResponse(SPEC_VALIDATION_FAILED.name(), e.getMessage());
+        return new ErrorResponse(SPEC_MODEL_VALIDATION_FAILED.name(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(JavaModelValidationException.class)
+    public ErrorResponse handle(JavaModelValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse(JAVA_MODEL_VALIDATION_FAILED.name(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConfigValidationException.class)
+    public ErrorResponse handle(ConfigValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse(CONFIG_VALIDATION_FAILED.name(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

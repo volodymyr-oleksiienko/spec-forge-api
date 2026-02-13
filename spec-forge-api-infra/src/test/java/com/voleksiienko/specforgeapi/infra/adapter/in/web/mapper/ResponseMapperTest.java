@@ -136,6 +136,7 @@ class ResponseMapperTest {
                 specModel,
                 "{\"field\": \"123\"}",
                 "{\"type\": \"object\", \"properties\": { \"active\" : \"boolean\" }}",
-                List.of(new Warning("Something happened", DomainErrorCode.SPEC_VALIDATION_FAILED)));
+                "code",
+                List.of(new Warning("Something happened", DomainErrorCode.SPEC_MODEL_VALIDATION_FAILED)));
     }
 }

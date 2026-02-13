@@ -38,6 +38,8 @@
         <json-schema-inferrer.version>0.2.1</json-schema-inferrer.version>
         <commons-validator.version>1.10.1</commons-validator.version>
         <json-schema-validator.version>3.0.0</json-schema-validator.version>
+        <javapoet.version>0.10.0</javapoet.version>
+        <modeshape-common.version>5.4.1.Final</modeshape-common.version>
     </properties>
 
     <dependencyManagement>
@@ -56,6 +58,16 @@
                 <groupId>com.networknt</groupId>
                 <artifactId>json-schema-validator</artifactId>
                 <version>${json-schema-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.palantir.javapoet</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>${javapoet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.modeshape</groupId>
+                <artifactId>modeshape-common</artifactId>
+                <version>${modeshape-common.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

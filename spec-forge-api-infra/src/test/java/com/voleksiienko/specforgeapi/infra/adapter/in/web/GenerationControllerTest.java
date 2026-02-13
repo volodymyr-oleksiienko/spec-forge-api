@@ -11,12 +11,17 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.GenerateA
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSampleCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSchemaCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.ArtifactsResult;
+import com.voleksiienko.specforgeapi.core.domain.exception.ConfigValidationException;
+import com.voleksiienko.specforgeapi.core.domain.exception.JavaModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.BooleanSpecType;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.BaseConfigDto;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromRawRequest;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.JavaConfigDto;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.RequestMapper;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.ResponseMapper;
 import java.util.List;
 import java.util.stream.Stream;
@@ -32,7 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(GenerationController.class)
-@Import(ResponseMapper.class)
+@Import({ResponseMapper.class, RequestMapper.class})
 class GenerationControllerTest {
 
     @Autowired
@@ -59,7 +64,19 @@ class GenerationControllerTest {
                         "Domain Validation Error",
                         new SpecModelValidationException("Bad Rule"),
                         400,
-                        "SPEC_VALIDATION_FAILED",
+                        "SPEC_MODEL_VALIDATION_FAILED",
+                        validRequest),
+                Arguments.of(
+                        "Domain Validation Error",
+                        new JavaModelValidationException("Parse Error"),
+                        400,
+                        "JAVA_MODEL_VALIDATION_FAILED",
+                        validRequest),
+                Arguments.of(
+                        "Domain Validation Error",
+                        new ConfigValidationException("Parse Error"),
+                        400,
+                        "CONFIG_VALIDATION_FAILED",
                         validRequest),
                 Arguments.of(
                         "Conversion Error",
@@ -75,7 +92,16 @@ class GenerationControllerTest {
     @ParameterizedTest(name = "[{index}] Endpoint: {0}")
     @MethodSource("successScenarios")
     void shouldGenerateArtifactsSuccessfully(String url) throws Exception {
-        var request = new GenerateFromRawRequest("{\"some\":\"json\"}");
+        var request = new GenerateFromRawRequest(
+                "{\"some\":\"json\"}",
+                new JavaConfigDto(
+                        new BaseConfigDto(
+                                new BaseConfigDto.NamingDto("J"),
+                                new BaseConfigDto.FieldsDto(BaseConfigDto.FieldsDto.SortTypeDto.ALPHABETICAL)),
+                        new JavaConfigDto.StructureDto(JavaConfigDto.StructureDto.TypeDto.RECORD),
+                        new JavaConfigDto.ValidationDto(true),
+                        new JavaConfigDto.BuilderDto(true, false),
+                        new JavaConfigDto.SerializationDto(JavaConfigDto.SerializationDto.JsonPropertyModeDto.ALWAYS)));
         var mockResult = new ArtifactsResult(
                 SpecModel.builder()
                         .wrapperType(SpecModel.WrapperType.OBJECT)
@@ -86,6 +112,7 @@ class GenerationControllerTest {
                         .build(),
                 "{\"active\": \"true\"}",
                 "{\"type\": \"object\", \"properties\": { \"active\" : \"boolean\" }}",
+                "code",
                 List.of());
 
         when(useCase.generateFromJsonSchema(any(GenerateFromJsonSchemaCommand.class)))
