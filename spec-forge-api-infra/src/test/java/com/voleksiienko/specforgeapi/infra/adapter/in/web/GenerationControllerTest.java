@@ -59,7 +59,7 @@ class GenerationControllerTest {
                         "Domain Validation Error",
                         new SpecModelValidationException("Bad Rule"),
                         400,
-                        "SPEC_VALIDATION_FAILED",
+                        "SPEC_MODEL_VALIDATION_FAILED",
                         validRequest),
                 Arguments.of(
                         "Conversion Error",

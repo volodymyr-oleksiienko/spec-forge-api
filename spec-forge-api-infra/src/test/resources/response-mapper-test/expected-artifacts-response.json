@@ -139,7 +139,7 @@
   "warnings": [
     {
       "devMessage": "Something happened",
-      "errorCode": "SPEC_VALIDATION_FAILED"
+      "errorCode": "SPEC_MODEL_VALIDATION_FAILED"
     }
   ]
 }

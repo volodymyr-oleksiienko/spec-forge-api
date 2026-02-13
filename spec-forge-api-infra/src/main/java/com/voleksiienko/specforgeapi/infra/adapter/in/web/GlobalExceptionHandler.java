@@ -1,6 +1,6 @@
 package com.voleksiienko.specforgeapi.infra.adapter.in.web;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.error.DomainErrorCode.SPEC_VALIDATION_FAILED;
+import static com.voleksiienko.specforgeapi.core.domain.model.error.DomainErrorCode.SPEC_MODEL_VALIDATION_FAILED;
 import static com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ApiErrorCode.INTERNAL;
 import static com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ApiErrorCode.INVALID_REQUEST_FORMAT;
 
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SpecModelValidationException.class)
     public ErrorResponse handle(SpecModelValidationException e) {
         log.error(e.getMessage(), e);
-        return new ErrorResponse(SPEC_VALIDATION_FAILED.name(), e.getMessage());
+        return new ErrorResponse(SPEC_MODEL_VALIDATION_FAILED.name(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
