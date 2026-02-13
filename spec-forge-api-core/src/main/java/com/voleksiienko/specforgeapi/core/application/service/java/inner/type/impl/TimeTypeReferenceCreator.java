@@ -4,7 +4,6 @@ import com.voleksiienko.specforgeapi.core.application.annotation.Component;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
-import com.voleksiienko.specforgeapi.core.domain.model.spec.type.DateTimeSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.TimeSpecType;
 import java.time.LocalTime;
@@ -20,7 +19,7 @@ public class TimeTypeReferenceCreator implements TypeReferenceCreator {
 
     @Override
     public TypeReference create(String specPropertyName, SpecType specType, MappingContext ctx) {
-        if (isLocalCompatible(((DateTimeSpecType) specType).getFormat())) {
+        if (isLocalCompatible(((TimeSpecType) specType).getFormat())) {
             return TypeReference.builder()
                     .packageName("java.time")
                     .simpleName("LocalTime")

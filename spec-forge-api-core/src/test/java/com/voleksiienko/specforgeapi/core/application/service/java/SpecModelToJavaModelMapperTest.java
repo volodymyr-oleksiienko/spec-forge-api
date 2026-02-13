@@ -1,14 +1,5 @@
 package com.voleksiienko.specforgeapi.core.application.service.java;
 
-import static com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig.Fields.SortType.AS_IS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Serialization.JsonPropertyMode.ALWAYS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.CLASS;
-import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.RECORD;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaTypeToFingerprintPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.util.StringInflectorPort;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.*;
@@ -20,15 +11,28 @@ import com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaClass;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaEnum;
+import com.voleksiienko.specforgeapi.core.domain.model.java.JavaField;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig.Fields.SortType.AS_IS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Serialization.JsonPropertyMode.ALWAYS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.CLASS;
+import static com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig.Structure.Type.RECORD;
+import static com.voleksiienko.specforgeapi.core.domain.model.spec.type.StringSpecType.StringTypeFormat.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SpecModelToJavaModelMapperTest {
 
@@ -160,15 +164,80 @@ class SpecModelToJavaModelMapperTest {
         assertThat(result.isRecord()).isTrue();
     }
 
+    @Test
+    void shouldMapTemporalTypes() {
+        var spec = SpecModel.builder()
+                .wrapperType(SpecModel.WrapperType.OBJECT)
+                .properties(List.of(
+                        createProp(
+                                "date",
+                                DateSpecType.builder().format("yyyy.MM.dd").build()),
+                        createProp(
+                                "time",
+                                TimeSpecType.builder().format("HH:mm:ss").build()),
+                        createProp(
+                                "offsetTime",
+                                TimeSpecType.builder().format("HH:mm:ssXXX").build()),
+                        createProp(
+                                "local",
+                                DateTimeSpecType.builder()
+                                        .format("yyyy-MM-dd'T'HH:mm:ss")
+                                        .build()),
+                        createProp(
+                                "offset",
+                                DateTimeSpecType.builder()
+                                        .format("yyyy-MM-dd'T'HH:mm:ssXXX")
+                                        .build())))
+                .build();
+
+        JavaClass result = mapper.map(spec, createConfig(CLASS, true));
+
+        assertThat(result.getFields().get(0).getType().getSimpleName()).isEqualTo("LocalDate");
+        assertThat(result.getFields().get(0).getType().getPackageName()).isEqualTo("java.time");
+        assertThat(result.getFields().get(1).getType().getSimpleName()).isEqualTo("LocalTime");
+        assertThat(result.getFields().get(1).getType().getPackageName()).isEqualTo("java.time");
+        assertThat(result.getFields().get(2).getType().getSimpleName()).isEqualTo("OffsetTime");
+        assertThat(result.getFields().get(2).getType().getPackageName()).isEqualTo("java.time");
+        assertThat(result.getFields().get(3).getType().getSimpleName()).isEqualTo("LocalDateTime");
+        assertThat(result.getFields().get(3).getType().getPackageName()).isEqualTo("java.time");
+        assertThat(result.getFields().get(4).getType().getSimpleName()).isEqualTo("OffsetDateTime");
+        assertThat(result.getFields().get(4).getType().getPackageName()).isEqualTo("java.time");
+    }
+
+    @Test
+    void shouldMapBasicTypesAndFormats() {
+        var spec = SpecModel.builder()
+                .wrapperType(SpecModel.WrapperType.OBJECT)
+                .properties(List.of(
+                        createProp("active", new BooleanSpecType(), true),
+                        createProp("flag", new BooleanSpecType(), false),
+                        createProp("score", DoubleSpecType.builder().build(), true),
+                        createProp("ratio", DoubleSpecType.builder().build(), false),
+                        createProp("cost", DecimalSpecType.builder().build(), true),
+                        createProp("name", StringSpecType.builder().build(), true),
+                        createProp("uid", StringSpecType.builder().format(UUID).build(), true)))
+                .build();
+
+        JavaClass result = mapper.map(spec, createConfig(CLASS, false));
+
+        List<JavaField> fields = result.getFields();
+        assertThat(fields)
+                .extracting("type.simpleName", "type.packageName", "type.primitive")
+                .containsExactly(
+                        tuple("boolean", null, true),
+                        tuple("Boolean", "java.lang", false),
+                        tuple("double", null, true),
+                        tuple("Double", "java.lang", false),
+                        tuple("BigDecimal", "java.math", false),
+                        tuple("String", "java.lang", false),
+                        tuple("UUID", "java.util", false));
+    }
+
     private void setupInflector() {
         when(inflector.capitalize("shippingAddress")).thenReturn("ShippingAddress");
         when(inflector.capitalize("billingAddress")).thenReturn("BillingAddress");
-        when(inflector.capitalize("city")).thenReturn("City");
-        when(inflector.capitalize("zip")).thenReturn("Zip");
         when(inflector.capitalize("status")).thenReturn("Status");
         when(inflector.capitalize("data")).thenReturn("Data");
-        when(inflector.capitalize("count")).thenReturn("Count");
-        when(inflector.capitalize("id")).thenReturn("Id");
         when(inflector.singularize("data")).thenReturn("data");
     }
 
@@ -203,6 +272,10 @@ class SpecModelToJavaModelMapperTest {
 
     private SpecProperty createProp(String name, SpecType type) {
         return SpecProperty.builder().name(name).type(type).required(false).build();
+    }
+
+    private SpecProperty createProp(String name, SpecType type, boolean required) {
+        return SpecProperty.builder().name(name).type(type).required(required).build();
     }
 
     private JavaConfig createConfig(JavaConfig.Structure.Type structureType, boolean validationEnabled) {
