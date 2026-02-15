@@ -6,7 +6,8 @@ public enum DomainErrorCode implements ErrorCode {
     TS_MODEL_VALIDATION_FAILED,
     SPEC_TO_JAVA_CONVERSION_FAILED,
     SPEC_TO_TS_CONVERSION_FAILED,
-    CONFIG_VALIDATION_FAILED;
+    CONFIG_VALIDATION_FAILED,
+    CODE_GENERATION_FAILED;
 
     @Override
     public String getName() {

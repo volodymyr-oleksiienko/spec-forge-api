@@ -8,6 +8,7 @@ import com.voleksiienko.specforgeapi.core.application.exception.ConversionExcept
 import com.voleksiienko.specforgeapi.core.domain.exception.ConfigValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.JavaModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import com.voleksiienko.specforgeapi.core.domain.exception.TsModelValidationException;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -68,6 +69,13 @@ public class GlobalExceptionHandler {
     public ErrorResponse handle(JavaModelValidationException e) {
         log.error(e.getMessage(), e);
         return new ErrorResponse(JAVA_MODEL_VALIDATION_FAILED.name(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TsModelValidationException.class)
+    public ErrorResponse handle(TsModelValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse(TS_MODEL_VALIDATION_FAILED.name(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
