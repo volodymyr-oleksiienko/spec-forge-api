@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSampleCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromJsonSchemaCommand;
+import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.GenerateFromSpecModelCommand;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.ArtifactsResult;
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaModelToJavaCodePort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.*;
@@ -79,6 +80,8 @@ class GenerateArtifactsUseCaseImplTest {
 
         verifyResult(result);
         verify(jsonSchemaValidator).validate(jsonSchema);
+        verify(schemaParser).map(jsonSchema);
+        assertThat(result.warnings()).isEqualTo(warnings);
     }
 
     @Test
@@ -101,6 +104,15 @@ class GenerateArtifactsUseCaseImplTest {
         var result = useCase.generateFromJsonSample(new GenerateFromJsonSampleCommand(jsonSample, config));
 
         verifyResult(result);
+        verify(schemaParser).map(jsonSchema);
+        assertThat(result.warnings()).isEqualTo(warnings);
+    }
+
+    @Test
+    void shouldGenerateArtifactsFromSpecModel() {
+        var result = useCase.generateFromSpecModel(new GenerateFromSpecModelCommand(mockModel, config));
+
+        verifyResult(result);
     }
 
     @Test
@@ -115,13 +127,11 @@ class GenerateArtifactsUseCaseImplTest {
     }
 
     private void verifyResult(ArtifactsResult result) {
-        verify(schemaParser).map(jsonSchema);
         verify(jsonSampleGenerator).map(mockModel);
         verify(jsonSchemaGenerator).map(mockModel);
         verify(javaModelMapper).map(mockModel, config);
         verify(javaCodeMapper).map(javaClass);
         assertThat(result.specModel()).isEqualTo(mockModel);
-        assertThat(result.warnings()).isEqualTo(warnings);
         assertThat(result.jsonSample()).isEqualTo(jsonSample);
         assertThat(result.code()).isEqualTo(expectedCode);
         assertThat(result.jsonSchema()).isEqualTo(jsonSchema);

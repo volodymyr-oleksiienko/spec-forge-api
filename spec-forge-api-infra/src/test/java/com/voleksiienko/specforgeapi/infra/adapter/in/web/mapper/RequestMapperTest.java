@@ -12,10 +12,11 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.G
 import com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.TypeScriptConfig;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.BaseConfigDto;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromRawRequest;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.JavaConfigDto;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.TypeScriptConfigDto;
+import com.voleksiienko.specforgeapi.core.domain.model.spec.type.ObjectSpecType;
+import com.voleksiienko.specforgeapi.core.domain.model.spec.type.StringSpecType;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.SpecModelDto;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.*;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class RequestMapperTest {
@@ -86,6 +87,36 @@ class RequestMapperTest {
         assertThat(command.jsonSample()).isEqualTo("{}");
         assertThat(command.config()).isInstanceOf(TypeScriptConfig.class);
         assertTypeScriptConfigMatches((TypeScriptConfig) command.config());
+    }
+
+    @Test
+    void shouldMapGenerateFromSpecModelCommand() {
+        var propDto = new SpecModelDto.SpecPropertyDto(
+                "id", new SpecModelDto.SpecTypeDto.IntegerTypeDto(null, null, null), true, null, null);
+        var specModelDto = new SpecModelDto(SpecModelDto.WrapperType.OBJECT, List.of(propDto));
+        var request = new GenerateFromSpecModelRequest(specModelDto, tsConfigDto);
+
+        var command = mapper.toGenerateFromSpecModelCommand(request);
+
+        assertThat(command.specModel().getProperties()).hasSize(1);
+        assertThat(command.specModel().getProperties().getFirst().getName()).isEqualTo("id");
+        assertThat(command.config()).isInstanceOf(TypeScriptConfig.class);
+    }
+
+    @Test
+    void shouldHandleRecursiveNesting() {
+        var stringType = new SpecModelDto.SpecTypeDto.StringTypeDto(null, null, null, null, null);
+        var innerProp = new SpecModelDto.SpecPropertyDto("inner", stringType, true, null, null);
+        var objectType = new SpecModelDto.SpecTypeDto.ObjectTypeDto(List.of(innerProp));
+
+        var rootProp = new SpecModelDto.SpecPropertyDto("root", objectType, true, null, null);
+        var dto = new SpecModelDto(SpecModelDto.WrapperType.OBJECT, List.of(rootProp));
+
+        var domain = mapper.toDomain(dto);
+
+        var rootType = (ObjectSpecType) domain.getProperties().getFirst().getType();
+        assertThat(rootType.getChildren().getFirst().getName()).isEqualTo("inner");
+        assertThat(rootType.getChildren().getFirst().getType()).isInstanceOf(StringSpecType.class);
     }
 
     private void assertJavaConfigMatches(JavaConfig config) {

@@ -53,33 +53,108 @@ Application health check available at:
 
 ## 📡 API Reference
 
-### 1. Generate SpecModel (IR) from JSON Schema
+### 1. Generate Artifacts from JSON Schema
 
 **Endpoint:** `POST /artifacts/from-json-schema`  
 **Content-Type:** `application/json`
 
-**Request Body:**
+**Request Body Sample:**
 
 ```json
 {
-  "content": "{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}}"
+  "content": "{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}}",
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
 }
 ```
 
-### 2. Generate SpecModel (IR) from JSON Sample
+### 2. Generate Artifacts from JSON Sample
 
 **Endpoint:** `POST /artifacts/from-json-sample`  
 **Content-Type:** `application/json`
 
-**Request Body:**
+**Request Body Sample:**
 
 ```json
 {
-  "content": "{\"id\": 123}"
+  "content": "{\"id\": 123}",
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
 }
 ```
 
-### Response (Success 200 OK)
+### 3. Generate Artifacts from Spec Model
+
+**Endpoint:** `POST /artifacts/from-spec-model`  
+**Content-Type:** `application/json`
+
+**Request Body Sample (generationConfig is optional):**
+
+```json
+{
+  "specModel": {
+    "wrapperType": "OBJECT",
+    "properties": [
+      {
+        "name": "id",
+        "type": {
+          "type": "INTEGER"
+        },
+        "required": false
+      }
+    ]
+  },
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
+}
+```
+
+### Unified Response (Success 200 OK)
 
 Returns the standardized SpecModel and any warnings.
 
@@ -98,7 +173,8 @@ Returns the standardized SpecModel and any warnings.
     ]
   },
   "jsonSample": "{\"id\": \"1\"}",
-  "jsonSchema": "{\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"type\": \"object\", \"properties\": { \"id\": { \"type\": \"string\" } } }"
+  "jsonSchema": "{\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"type\": \"object\", \"properties\": { \"id\": { \"type\": \"string\" } } }",
+  "code": "export interface PersonDto {\n  id?: number;\n}\n\n"
 }
 ```
 
@@ -134,14 +210,12 @@ graph LR
         IR[Spec Model]
         JE[JSON Sample]
         JS[JSON Schema]
-        HT[HTML Table]
     end
 
     G -->|one of| J
     G -->|one of| T
     G --> JE
     G --> JS
-    G --> HT
     G --> IR
 
 ```

@@ -14,10 +14,12 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.Ar
 import com.voleksiienko.specforgeapi.core.domain.exception.ConfigValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.JavaModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.exception.SpecModelValidationException;
+import com.voleksiienko.specforgeapi.core.domain.exception.TsModelValidationException;
 import com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.BooleanSpecType;
+import com.voleksiienko.specforgeapi.core.domain.model.spec.type.IntegerSpecType;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.BaseConfigDto;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromRawRequest;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.JavaConfigDto;
@@ -25,6 +27,7 @@ import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.RequestMapper;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.ResponseMapper;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -71,6 +74,12 @@ class GenerationControllerTest {
                         new JavaModelValidationException("Parse Error"),
                         400,
                         "JAVA_MODEL_VALIDATION_FAILED",
+                        validRequest),
+                Arguments.of(
+                        "Domain Validation Error",
+                        new TsModelValidationException("Parse Error"),
+                        400,
+                        "TS_MODEL_VALIDATION_FAILED",
                         validRequest),
                 Arguments.of(
                         "Domain Validation Error",
@@ -145,5 +154,57 @@ class GenerationControllerTest {
                         .content(requestContent))
                 .andExpect(status().is(expectedStatus))
                 .andExpect(jsonPath("$.code").value(expectedErrorCode));
+    }
+
+    @Test
+    void shouldGenerateFromSpecModelSuccessfully() throws Exception {
+        var request = """
+            {
+              "specModel": {
+                "wrapperType": "OBJECT",
+                "properties": [
+                  {
+                    "name": "id",
+                    "type": { "type": "INTEGER" },
+                    "required": true
+                  }
+                ]
+              },
+              "generationConfig": {
+                "language": "JAVA",
+                "base": {
+                  "naming": { "className": "User" },
+                  "fields": { "sort": "AS_IS" }
+                },
+                "structure": { "type": "RECORD" },
+                "validation": { "enabled": true },
+                "builder": { "enabled": true, "onlyIfMultipleFields": true },
+                "serialization": { "jsonPropertyMode": "ALWAYS" }
+              }
+            }
+            """;
+
+        var mockResult = new ArtifactsResult(
+                SpecModel.builder()
+                        .wrapperType(SpecModel.WrapperType.OBJECT)
+                        .properties(List.of(SpecProperty.builder()
+                                .name("id")
+                                .type(IntegerSpecType.builder().build())
+                                .build()))
+                        .build(),
+                "{}",
+                "{}",
+                "code",
+                List.of());
+
+        when(useCase.generateFromSpecModel(any())).thenReturn(mockResult);
+
+        mockMvc.perform(post("/artifacts/from-spec-model")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.specModel").exists())
+                .andExpect(jsonPath("$.jsonSchema").value("{}"))
+                .andExpect(jsonPath("$.jsonSample").value("{}"));
     }
 }

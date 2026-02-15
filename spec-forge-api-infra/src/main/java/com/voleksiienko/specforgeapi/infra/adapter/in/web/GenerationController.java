@@ -3,6 +3,7 @@ package com.voleksiienko.specforgeapi.infra.adapter.in.web;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.GenerateArtifactsUseCase;
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.ArtifactsResult;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromRawRequest;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromSpecModelRequest;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ArtifactsResponse;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.RequestMapper;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.mapper.ResponseMapper;
@@ -31,6 +32,13 @@ public class GenerationController {
     public ArtifactsResponse generateFromJsonSample(@RequestBody @Valid GenerateFromRawRequest request) {
         var command = requestMapper.toGenerateFromJsonSampleCommand(request);
         ArtifactsResult result = useCase.generateFromJsonSample(command);
+        return responseMapper.map(result);
+    }
+
+    @PostMapping("/artifacts/from-spec-model")
+    public ArtifactsResponse generateFromSpecModel(@RequestBody @Valid GenerateFromSpecModelRequest request) {
+        var command = requestMapper.toGenerateFromSpecModelCommand(request);
+        ArtifactsResult result = useCase.generateFromSpecModel(command);
         return responseMapper.map(result);
     }
 }
