@@ -60,7 +60,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
         String code =
                 switch (config) {
                     case JavaConfig c -> javaCodeMapper.map(javaModelMapper.map(conversionResult.model(), c));
-                    case null -> null;
+                    case null, default -> null;
                 };
         return new ArtifactsResult(conversionResult.model(), jsonSample, jsonSchema, code, conversionResult.warnings());
     }
