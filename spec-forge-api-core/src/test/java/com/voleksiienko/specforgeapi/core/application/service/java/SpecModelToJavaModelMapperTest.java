@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaTypeToFingerprintPort;
+import com.voleksiienko.specforgeapi.core.application.port.out.util.FingerprintGeneratorPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.util.StringInflectorPort;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.*;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.ClassNameCreator;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 class SpecModelToJavaModelMapperTest {
 
-    private final JavaTypeToFingerprintPort fingerprintPort = mock(JavaTypeToFingerprintPort.class);
+    private final FingerprintGeneratorPort fingerprintPort = mock(FingerprintGeneratorPort.class);
     private final StringInflectorPort inflector = mock(StringInflectorPort.class);
     private SpecModelToJavaModelMapper mapper;
 
@@ -241,11 +241,11 @@ class SpecModelToJavaModelMapperTest {
     }
 
     private void setupFingerprinter() {
-        when(fingerprintPort.map(argThat(
-                        type -> type != null && type.getFields().stream().anyMatch(f -> "city".equals(f.getName())))))
+        when(fingerprintPort.map(argThat(type -> type instanceof JavaClass javaClass
+                        && javaClass.getFields().stream().anyMatch(f -> "city".equals(f.getName())))))
                 .thenReturn("ADDRESS_STRUCT_HASH");
-        when(fingerprintPort.map(argThat(
-                        type -> type != null && type.getFields().stream().noneMatch(f -> "city".equals(f.getName())))))
+        when(fingerprintPort.map(argThat(type -> type instanceof JavaClass javaClass
+                        && javaClass.getFields().stream().noneMatch(f -> "city".equals(f.getName())))))
                 .thenReturn("OTHER_STRUCT_HASH");
     }
 

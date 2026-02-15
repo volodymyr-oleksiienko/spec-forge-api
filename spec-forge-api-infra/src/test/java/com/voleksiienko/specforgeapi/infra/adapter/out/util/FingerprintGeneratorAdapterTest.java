@@ -1,4 +1,4 @@
-package com.voleksiienko.specforgeapi.infra.adapter.out.java;
+package com.voleksiienko.specforgeapi.infra.adapter.out.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,9 +8,9 @@ import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class JavaTypeToFingerprintAdapterTest {
+class FingerprintGeneratorAdapterTest {
 
-    private final JavaTypeToFingerprintAdapter adapter = new JavaTypeToFingerprintAdapter();
+    private final FingerprintGeneratorAdapter adapter = new FingerprintGeneratorAdapter();
 
     @Test
     void shouldIgnoreNameInFingerprint() {
