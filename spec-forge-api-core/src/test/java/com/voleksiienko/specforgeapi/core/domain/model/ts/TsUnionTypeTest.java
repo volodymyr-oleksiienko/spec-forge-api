@@ -18,7 +18,7 @@ class TsUnionTypeTest {
 
         assertThat(union.getName()).isEqualTo("Status");
         assertThat(union.getValues()).hasSize(2);
-        assertThat(union.getValues().contains("'ACTIVE'")).isTrue();
+        assertThat(union.getValues()).containsExactlyInAnyOrder("'ACTIVE'", "'INACTIVE'");
     }
 
     @Test

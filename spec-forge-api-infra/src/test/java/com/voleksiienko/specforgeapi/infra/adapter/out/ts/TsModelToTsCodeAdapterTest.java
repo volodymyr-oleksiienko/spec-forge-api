@@ -89,7 +89,7 @@ class TsModelToTsCodeAdapterTest {
             export type Status = 'OPEN' | 'CLOSED';
 
             """;
-        assertThat(result.toString()).isEqualTo(expected);
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
