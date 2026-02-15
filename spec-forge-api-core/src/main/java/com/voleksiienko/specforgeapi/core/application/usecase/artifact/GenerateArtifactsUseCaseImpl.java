@@ -7,9 +7,12 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.G
 import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.ArtifactsResult;
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaModelToJavaCodePort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.*;
+import com.voleksiienko.specforgeapi.core.application.port.out.ts.TsModelToTsCodePort;
 import com.voleksiienko.specforgeapi.core.application.service.java.SpecModelToJavaModelMapper;
+import com.voleksiienko.specforgeapi.core.application.service.ts.SpecModelToTsModelMapper;
 import com.voleksiienko.specforgeapi.core.domain.model.config.GenerationConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
+import com.voleksiienko.specforgeapi.core.domain.model.config.TypeScriptConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResult;
 
 @UseCase
@@ -22,6 +25,8 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
     private final SpecModelToJsonSchemaPort schemaGenerator;
     private final SpecModelToJavaModelMapper javaModelMapper;
     private final JavaModelToJavaCodePort javaCodeMapper;
+    private final SpecModelToTsModelMapper tsModelMapper;
+    private final TsModelToTsCodePort tsCodeMapper;
 
     public GenerateArtifactsUseCaseImpl(
             JsonSchemaValidatorPort jsonSchemaValidator,
@@ -30,7 +35,9 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
             SpecModelToJsonSamplePort sampleGenerator,
             SpecModelToJsonSchemaPort schemaGenerator,
             SpecModelToJavaModelMapper javaModelMapper,
-            JavaModelToJavaCodePort javaCodeMapper) {
+            JavaModelToJavaCodePort javaCodeMapper,
+            SpecModelToTsModelMapper tsModelMapper,
+            TsModelToTsCodePort tsCodeMapper) {
         this.jsonSchemaValidator = jsonSchemaValidator;
         this.schemaParser = schemaParser;
         this.sampleMapper = sampleMapper;
@@ -38,6 +45,8 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
         this.schemaGenerator = schemaGenerator;
         this.javaModelMapper = javaModelMapper;
         this.javaCodeMapper = javaCodeMapper;
+        this.tsModelMapper = tsModelMapper;
+        this.tsCodeMapper = tsCodeMapper;
     }
 
     @Override
@@ -60,6 +69,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
         String code =
                 switch (config) {
                     case JavaConfig c -> javaCodeMapper.map(javaModelMapper.map(conversionResult.model(), c));
+                    case TypeScriptConfig c -> tsCodeMapper.map(tsModelMapper.map(conversionResult.model(), c));
                     case null -> null;
                 };
         return new ArtifactsResult(conversionResult.model(), jsonSample, jsonSchema, code, conversionResult.warnings());

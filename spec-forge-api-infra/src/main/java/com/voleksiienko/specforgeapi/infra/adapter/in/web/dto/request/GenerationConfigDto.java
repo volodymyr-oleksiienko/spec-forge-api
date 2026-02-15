@@ -4,5 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "language")
-@JsonSubTypes({@JsonSubTypes.Type(value = JavaConfigDto.class, name = "JAVA")})
-public sealed interface GenerationConfigDto permits JavaConfigDto {}
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = JavaConfigDto.class, name = "JAVA"),
+    @JsonSubTypes.Type(value = TypeScriptConfigDto.class, name = "TYPESCRIPT")
+})
+public sealed interface GenerationConfigDto permits JavaConfigDto, TypeScriptConfigDto {}

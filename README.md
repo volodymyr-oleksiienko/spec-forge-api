@@ -18,17 +18,6 @@ a unified **Intermediate Representation (IR)**. This IR is then used to generate
 
 ---
 
-## 🏗️ Current Status
-
-This project is currently under **active development**.
-
-- ✅ Core Domain Logic (IR & Transformations)
-- ✅ REST API Adapters (Schema & Sample generation)
-- ✅ Json Sample/Json Schema Generators (In Progress)
-- 🚧 Java/TypeScript Code Generators (In Progress)
-
----
-
 ## 🚀 Quick Start
 
 ### 📋 Prerequisites
@@ -161,12 +150,12 @@ graph LR
 
 ## 🔄 Conversion Matrix
 
-| Source Format               | Ingest (to SpecModel) | Generate (from SpecModel) |
-|:----------------------------|:---------------------:|:-------------------------:|
-| **JSON Example**            |           ✅           |             ✅             |
-| **JSON Schema**             |           ✅           |             ✅             |
-| **Java (Records/POJOs)**    |           ❌           |             ✅             |
-| **TypeScript (Interfaces)** |           ❌           |            🚧             |
+| Source Format                            | Ingest (to SpecModel) | Generate (from SpecModel) |
+|:-----------------------------------------|:---------------------:|:-------------------------:|
+| **JSON Example**                         |           ✅           |             ✅             |
+| **JSON Schema**                          |           ✅           |             ✅             |
+| **Java (Records/POJOs)**                 |           ❌           |             ✅             |
+| **TypeScript (Interfaces\Type Aliases)** |           ❌           |             ✅             |
 
 ---
 

@@ -1,7 +1,7 @@
 package com.voleksiienko.specforgeapi.core.application.service.java.inner;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
-import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaTypeToFingerprintPort;
+import com.voleksiienko.specforgeapi.core.application.port.out.util.FingerprintGeneratorPort;
 import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.model.java.*;
 import java.util.*;
@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 @Component
 public class ClassDeduplicator {
 
-    private final JavaTypeToFingerprintPort fingerprintGenerator;
+    private final FingerprintGeneratorPort fingerprintGenerator;
 
-    public ClassDeduplicator(JavaTypeToFingerprintPort fingerprintGenerator) {
+    public ClassDeduplicator(FingerprintGeneratorPort fingerprintGenerator) {
         this.fingerprintGenerator = fingerprintGenerator;
     }
 
