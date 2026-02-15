@@ -5,10 +5,8 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.command.G
 import com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.GenerationConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.BaseConfigDto;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerateFromRawRequest;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.GenerationConfigDto;
-import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.JavaConfigDto;
+import com.voleksiienko.specforgeapi.core.domain.model.config.TypeScriptConfig;
+import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.request.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +23,7 @@ public class RequestMapper {
     public GenerationConfig toDomain(GenerationConfigDto dto) {
         return switch (dto) {
             case JavaConfigDto c -> mapJavaConfig(c);
+            case TypeScriptConfigDto c -> mapTypeScriptConfig(c);
             case null -> null;
         };
     }
@@ -61,5 +60,19 @@ public class RequestMapper {
     private JavaConfig.Serialization mapSerialization(JavaConfigDto.SerializationDto dto) {
         return new JavaConfig.Serialization(JavaConfig.Serialization.JsonPropertyMode.valueOf(
                 dto.jsonPropertyMode().name()));
+    }
+
+    public TypeScriptConfig mapTypeScriptConfig(TypeScriptConfigDto dto) {
+        return new TypeScriptConfig(mapBaseConfig(dto.base()), mapStructure(dto.structure()), mapEnums(dto.enums()));
+    }
+
+    private TypeScriptConfig.Structure mapStructure(TypeScriptConfigDto.StructureDto dto) {
+        return new TypeScriptConfig.Structure(
+                TypeScriptConfig.Structure.DeclarationStyle.valueOf(dto.style().name()));
+    }
+
+    private TypeScriptConfig.Enums mapEnums(TypeScriptConfigDto.EnumsDto dto) {
+        return new TypeScriptConfig.Enums(
+                TypeScriptConfig.Enums.EnumStyle.valueOf(dto.style().name()));
     }
 }
