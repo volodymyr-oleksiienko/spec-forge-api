@@ -10,10 +10,10 @@ import java.util.List;
 @Component
 public class JavaEnumFactory {
 
-    private final AnnotationsSupplier annotationsSupplier;
+    private final JavaAnnotationsSupplier javaAnnotationsSupplier;
 
-    public JavaEnumFactory(AnnotationsSupplier annotationsSupplier) {
-        this.annotationsSupplier = annotationsSupplier;
+    public JavaEnumFactory(JavaAnnotationsSupplier javaAnnotationsSupplier) {
+        this.javaAnnotationsSupplier = javaAnnotationsSupplier;
     }
 
     public JavaEnum convertToEnum(String enumName, EnumSpecType type) {
@@ -51,8 +51,9 @@ public class JavaEnumFactory {
 
         if (needsField) {
             fields.add(createValueField(isNumeric));
-            annotations.add(annotationsSupplier.getAnnotationBuilder("Getter").build());
-            annotations.add(annotationsSupplier
+            annotations.add(
+                    javaAnnotationsSupplier.getAnnotationBuilder("Getter").build());
+            annotations.add(javaAnnotationsSupplier
                     .getAnnotationBuilder("RequiredArgsConstructor")
                     .build());
         }

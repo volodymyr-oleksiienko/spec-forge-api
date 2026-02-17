@@ -1,8 +1,8 @@
 package com.voleksiienko.specforgeapi.core.application.service.java.inner;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreatorFacade;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreatorFacade;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaAnnotation;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaClass;
@@ -17,20 +17,20 @@ import java.util.Map;
 @Component
 public class JavaClassFactory {
 
-    private final TypeReferenceCreatorFacade typeReferenceCreatorFacade;
+    private final JavaTypeReferenceCreatorFacade javaTypeReferenceCreatorFacade;
     private final JavaFieldSorter javaFieldSorter;
-    private final AnnotationsSupplier annotationsSupplier;
+    private final JavaAnnotationsSupplier javaAnnotationsSupplier;
 
     public JavaClassFactory(
-            TypeReferenceCreatorFacade typeReferenceCreatorFacade,
+            JavaTypeReferenceCreatorFacade javaTypeReferenceCreatorFacade,
             JavaFieldSorter javaFieldSorter,
-            AnnotationsSupplier annotationsSupplier) {
-        this.typeReferenceCreatorFacade = typeReferenceCreatorFacade;
+            JavaAnnotationsSupplier javaAnnotationsSupplier) {
+        this.javaTypeReferenceCreatorFacade = javaTypeReferenceCreatorFacade;
         this.javaFieldSorter = javaFieldSorter;
-        this.annotationsSupplier = annotationsSupplier;
+        this.javaAnnotationsSupplier = javaAnnotationsSupplier;
     }
 
-    public JavaClass mapToClass(String name, List<SpecProperty> specProperties, MappingContext ctx) {
+    public JavaClass mapToClass(String name, List<SpecProperty> specProperties, JavaMappingContext ctx) {
         List<JavaField> sortedFields = javaFieldSorter.sort(mapToFields(specProperties, ctx), ctx.config());
         boolean isRecord =
                 JavaConfig.Structure.Type.RECORD == ctx.config().structure().type();
@@ -40,20 +40,20 @@ public class JavaClassFactory {
                 : JavaClass.createClass(name, annotations, sortedFields);
     }
 
-    private List<JavaField> mapToFields(List<SpecProperty> specProperties, MappingContext ctx) {
+    private List<JavaField> mapToFields(List<SpecProperty> specProperties, JavaMappingContext ctx) {
         return specProperties.stream()
                 .map(specProperty -> convertPropertyToField(specProperty, ctx))
                 .toList();
     }
 
-    private JavaField convertPropertyToField(SpecProperty property, MappingContext ctx) {
+    private JavaField convertPropertyToField(SpecProperty property, JavaMappingContext ctx) {
         return JavaField.builder()
                 .name(property.getName())
                 .annotations(buildFieldAnnotations(property, ctx.config()))
-                .type(typeReferenceCreatorFacade.create(
+                .type(javaTypeReferenceCreatorFacade.create(
                         property.getName(),
                         property.getType(),
-                        new MappingContext(ctx, isMustUsePrimitiveWrappers(property, ctx), false)))
+                        new JavaMappingContext(ctx, isMustUsePrimitiveWrappers(property, ctx), false)))
                 .build();
     }
 
@@ -62,50 +62,56 @@ public class JavaClassFactory {
         if (config.validation().enabled()) {
             if (property.isRequired()) {
                 if (property.getType() instanceof ListSpecType) {
-                    annotations.add(
-                            annotationsSupplier.getAnnotationBuilder("NotEmpty").build());
+                    annotations.add(javaAnnotationsSupplier
+                            .getAnnotationBuilder("NotEmpty")
+                            .build());
                 } else if (property.getType() instanceof StringSpecType s
                         && StringSpecType.StringTypeFormat.UUID != s.getFormat()) {
-                    annotations.add(
-                            annotationsSupplier.getAnnotationBuilder("NotBlank").build());
+                    annotations.add(javaAnnotationsSupplier
+                            .getAnnotationBuilder("NotBlank")
+                            .build());
 
                 } else {
-                    annotations.add(
-                            annotationsSupplier.getAnnotationBuilder("NotNull").build());
+                    annotations.add(javaAnnotationsSupplier
+                            .getAnnotationBuilder("NotNull")
+                            .build());
                 }
             }
             if (property.getType().isObjectStructure()) {
                 annotations.add(
-                        annotationsSupplier.getAnnotationBuilder("Valid").build());
+                        javaAnnotationsSupplier.getAnnotationBuilder("Valid").build());
             }
         }
         if (JavaConfig.Serialization.JsonPropertyMode.ALWAYS
                 == config.serialization().jsonPropertyMode()) {
-            JavaAnnotation.Builder jsonProp = annotationsSupplier.getAnnotationBuilder("JsonProperty");
+            JavaAnnotation.Builder jsonProp = javaAnnotationsSupplier.getAnnotationBuilder("JsonProperty");
             jsonProp.attributes(Map.of("value", "\"%s\"".formatted(property.getName())));
             annotations.add(jsonProp.build());
         }
         return annotations;
     }
 
-    private boolean isMustUsePrimitiveWrappers(SpecProperty property, MappingContext ctx) {
+    private boolean isMustUsePrimitiveWrappers(SpecProperty property, JavaMappingContext ctx) {
         return !property.isRequired() || ctx.config().validation().enabled();
     }
 
     private List<JavaAnnotation> generateClassAnnotations(boolean isRecord, List<JavaField> fields, JavaConfig config) {
         List<JavaAnnotation> annotations = new ArrayList<>();
         if (!isRecord) {
-            annotations.add(annotationsSupplier.getAnnotationBuilder("Getter").build());
-            annotations.add(annotationsSupplier.getAnnotationBuilder("Setter").build());
-            annotations.add(annotationsSupplier
+            annotations.add(
+                    javaAnnotationsSupplier.getAnnotationBuilder("Getter").build());
+            annotations.add(
+                    javaAnnotationsSupplier.getAnnotationBuilder("Setter").build());
+            annotations.add(javaAnnotationsSupplier
                     .getAnnotationBuilder("NoArgsConstructor")
                     .build());
-            annotations.add(annotationsSupplier
+            annotations.add(javaAnnotationsSupplier
                     .getAnnotationBuilder("AllArgsConstructor")
                     .build());
         }
         if (config.builder().enabled() && (!config.builder().onlyIfMultipleFields() || fields.size() > 1)) {
-            annotations.add(annotationsSupplier.getAnnotationBuilder("Builder").build());
+            annotations.add(
+                    javaAnnotationsSupplier.getAnnotationBuilder("Builder").build());
         }
         return annotations;
     }

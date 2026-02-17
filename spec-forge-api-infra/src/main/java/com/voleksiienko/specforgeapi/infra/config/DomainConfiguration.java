@@ -2,8 +2,8 @@ package com.voleksiienko.specforgeapi.infra.config;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
 import com.voleksiienko.specforgeapi.core.application.annotation.UseCase;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreatorFacade;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreatorFacade;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.TsTypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.TsTypeReferenceCreatorFacade;
 import java.util.List;
@@ -20,8 +20,9 @@ import org.springframework.context.annotation.*;
 public class DomainConfiguration {
 
     @Bean
-    public TypeReferenceCreatorFacade typeReferenceCreatorFacade(@Lazy List<TypeReferenceCreator> strategies) {
-        return new TypeReferenceCreatorFacade(strategies);
+    public JavaTypeReferenceCreatorFacade javaTypeReferenceCreatorFacade(
+            @Lazy List<JavaTypeReferenceCreator> strategies) {
+        return new JavaTypeReferenceCreatorFacade(strategies);
     }
 
     @Bean

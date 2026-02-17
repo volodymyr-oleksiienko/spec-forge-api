@@ -1,9 +1,9 @@
 package com.voleksiienko.specforgeapi.core.application.service.java;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.ClassDeduplicator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.JavaClassDeduplicator;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.JavaClassFactory;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaClass;
 import com.voleksiienko.specforgeapi.core.domain.model.java.JavaType;
@@ -15,19 +15,20 @@ import java.util.List;
 public class SpecModelToJavaModelMapper {
 
     private final JavaClassFactory javaClassFactory;
-    private final ClassDeduplicator classDeduplicator;
+    private final JavaClassDeduplicator javaClassDeduplicator;
 
-    public SpecModelToJavaModelMapper(JavaClassFactory javaClassFactory, ClassDeduplicator classDeduplicator) {
+    public SpecModelToJavaModelMapper(JavaClassFactory javaClassFactory, JavaClassDeduplicator javaClassDeduplicator) {
         this.javaClassFactory = javaClassFactory;
-        this.classDeduplicator = classDeduplicator;
+        this.javaClassDeduplicator = javaClassDeduplicator;
     }
 
     public JavaClass map(SpecModel specModel, JavaConfig config) {
         List<JavaType> nestedClassesAccumulator = new ArrayList<>();
         String rootClassName = config.base().naming().className();
-        MappingContext context = new MappingContext(rootClassName, nestedClassesAccumulator, config, false, false);
+        JavaMappingContext context =
+                new JavaMappingContext(rootClassName, nestedClassesAccumulator, config, false, false);
         JavaClass mainClass = javaClassFactory.mapToClass(rootClassName, specModel.getProperties(), context);
-        List<JavaType> distinctNested = classDeduplicator.deduplicate(nestedClassesAccumulator);
+        List<JavaType> distinctNested = javaClassDeduplicator.deduplicate(nestedClassesAccumulator);
         boolean isRecord =
                 JavaConfig.Structure.Type.RECORD == config.structure().type();
         return isRecord

@@ -8,11 +8,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class ClassDeduplicator {
+public class JavaClassDeduplicator {
 
     private final FingerprintGeneratorPort fingerprintGenerator;
 
-    public ClassDeduplicator(FingerprintGeneratorPort fingerprintGenerator) {
+    public JavaClassDeduplicator(FingerprintGeneratorPort fingerprintGenerator) {
         this.fingerprintGenerator = fingerprintGenerator;
     }
 

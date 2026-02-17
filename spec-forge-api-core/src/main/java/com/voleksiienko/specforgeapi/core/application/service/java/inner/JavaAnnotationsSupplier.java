@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Component
-public class AnnotationsSupplier {
+public class JavaAnnotationsSupplier {
 
     public static final String LOMBOK_PACKAGE = "lombok";
     private static final Map<String, Supplier<JavaAnnotation.Builder>> ANNOTATION_SUPPLIERS = new HashMap<>();
