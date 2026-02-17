@@ -2,22 +2,23 @@ package com.voleksiienko.specforgeapi.core.application.service.java.inner.type.i
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.JavaClassFactory;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.ClassNameCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaClassNameCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.ObjectSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 
 @Component
-public class ObjectTypeReferenceCreator implements TypeReferenceCreator {
+public class JavaObjectTypeReferenceCreator implements JavaTypeReferenceCreator {
 
     private final JavaClassFactory javaClassFactory;
-    private final ClassNameCreator classNameCreator;
+    private final JavaClassNameCreator javaClassNameCreator;
 
-    public ObjectTypeReferenceCreator(JavaClassFactory javaClassFactory, ClassNameCreator classNameCreator) {
+    public JavaObjectTypeReferenceCreator(
+            JavaClassFactory javaClassFactory, JavaClassNameCreator javaClassNameCreator) {
         this.javaClassFactory = javaClassFactory;
-        this.classNameCreator = classNameCreator;
+        this.javaClassNameCreator = javaClassNameCreator;
     }
 
     @Override
@@ -26,8 +27,8 @@ public class ObjectTypeReferenceCreator implements TypeReferenceCreator {
     }
 
     @Override
-    public TypeReference create(String specPropertyName, SpecType specType, MappingContext ctx) {
-        String className = classNameCreator.create(specPropertyName, ctx);
+    public TypeReference create(String specPropertyName, SpecType specType, JavaMappingContext ctx) {
+        String className = javaClassNameCreator.create(specPropertyName, ctx);
         ctx.javaTypes().add(javaClassFactory.mapToClass(className, ((ObjectSpecType) specType).getChildren(), ctx));
         return TypeReference.builder().simpleName(className).build();
     }

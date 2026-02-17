@@ -1,4 +1,4 @@
-package com.voleksiienko.specforgeapi.infra.adapter.json;
+package com.voleksiienko.specforgeapi.infra.adapter.out.json;
 
 import static com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +9,6 @@ import com.voleksiienko.specforgeapi.core.domain.model.conversion.ConversionResu
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecModel;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.SpecProperty;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.*;
-import com.voleksiienko.specforgeapi.infra.adapter.out.json.JsonSchemaToSpecModelAdapter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

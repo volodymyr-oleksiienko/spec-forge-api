@@ -1,11 +1,10 @@
-package com.voleksiienko.specforgeapi.infra.adapter.json;
+package com.voleksiienko.specforgeapi.infra.adapter.out.json;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.voleksiienko.specforgeapi.core.application.exception.ConversionException;
 import com.voleksiienko.specforgeapi.core.domain.model.error.JsonMappingErrorCode;
-import com.voleksiienko.specforgeapi.infra.adapter.out.json.JsonSchemaValidatorAdapter;
 import org.junit.jupiter.api.Test;
 
 class JsonSchemaValidatorAdapterTest {

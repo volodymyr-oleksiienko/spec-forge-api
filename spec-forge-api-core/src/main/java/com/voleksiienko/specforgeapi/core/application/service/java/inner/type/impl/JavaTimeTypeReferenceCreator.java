@@ -1,40 +1,40 @@
 package com.voleksiienko.specforgeapi.core.application.service.java.inner.type.impl;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
-import com.voleksiienko.specforgeapi.core.domain.model.spec.type.DateTimeSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
-import java.time.LocalDateTime;
+import com.voleksiienko.specforgeapi.core.domain.model.spec.type.TimeSpecType;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
-public class DateTimeTypeReferenceCreator implements TypeReferenceCreator {
+public class JavaTimeTypeReferenceCreator implements JavaTypeReferenceCreator {
 
     @Override
     public boolean supports(SpecType type) {
-        return type instanceof DateTimeSpecType;
+        return type instanceof TimeSpecType;
     }
 
     @Override
-    public TypeReference create(String specPropertyName, SpecType specType, MappingContext ctx) {
-        if (isLocalCompatible(((DateTimeSpecType) specType).getFormat())) {
+    public TypeReference create(String specPropertyName, SpecType specType, JavaMappingContext ctx) {
+        if (isLocalCompatible(((TimeSpecType) specType).getFormat())) {
             return TypeReference.builder()
                     .packageName("java.time")
-                    .simpleName("LocalDateTime")
+                    .simpleName("LocalTime")
                     .build();
         } else {
             return TypeReference.builder()
                     .packageName("java.time")
-                    .simpleName("OffsetDateTime")
+                    .simpleName("OffsetTime")
                     .build();
         }
     }
 
     private boolean isLocalCompatible(String pattern) {
         try {
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern));
+            LocalTime.now().format(DateTimeFormatter.ofPattern(pattern));
             return true;
         } catch (Exception _) {
             return false;

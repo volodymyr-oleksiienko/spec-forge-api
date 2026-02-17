@@ -2,22 +2,22 @@ package com.voleksiienko.specforgeapi.core.application.service.java.inner.type.i
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.JavaEnumFactory;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.ClassNameCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaClassNameCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.EnumSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 
 @Component
-public class EnumTypeReferenceCreator implements TypeReferenceCreator {
+public class JavaEnumTypeReferenceCreator implements JavaTypeReferenceCreator {
 
     private final JavaEnumFactory javaEnumFactory;
-    private final ClassNameCreator classNameCreator;
+    private final JavaClassNameCreator javaClassNameCreator;
 
-    public EnumTypeReferenceCreator(JavaEnumFactory javaEnumFactory, ClassNameCreator classNameCreator) {
+    public JavaEnumTypeReferenceCreator(JavaEnumFactory javaEnumFactory, JavaClassNameCreator javaClassNameCreator) {
         this.javaEnumFactory = javaEnumFactory;
-        this.classNameCreator = classNameCreator;
+        this.javaClassNameCreator = javaClassNameCreator;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class EnumTypeReferenceCreator implements TypeReferenceCreator {
     }
 
     @Override
-    public TypeReference create(String specPropertyName, SpecType specType, MappingContext ctx) {
-        String className = classNameCreator.create(specPropertyName, ctx);
+    public TypeReference create(String specPropertyName, SpecType specType, JavaMappingContext ctx) {
+        String className = javaClassNameCreator.create(specPropertyName, ctx);
         ctx.javaTypes().add(javaEnumFactory.convertToEnum(className, (EnumSpecType) specType));
         return TypeReference.builder().simpleName(className).build();
     }

@@ -1,9 +1,8 @@
-package com.voleksiienko.specforgeapi.infra.adapter.json;
+package com.voleksiienko.specforgeapi.infra.adapter.out.json;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.voleksiienko.specforgeapi.core.application.exception.ConversionException;
-import com.voleksiienko.specforgeapi.infra.adapter.out.json.JsonSampleToJsonSchemaAdapter;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

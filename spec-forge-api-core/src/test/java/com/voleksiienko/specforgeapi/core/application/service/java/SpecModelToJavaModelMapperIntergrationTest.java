@@ -14,9 +14,9 @@ import static org.mockito.Mockito.when;
 import com.voleksiienko.specforgeapi.core.application.port.out.util.FingerprintGeneratorPort;
 import com.voleksiienko.specforgeapi.core.application.port.out.util.StringInflectorPort;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.*;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.ClassNameCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreatorFacade;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaClassNameCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreatorFacade;
 import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.impl.*;
 import com.voleksiienko.specforgeapi.core.domain.model.config.BaseConfig;
 import com.voleksiienko.specforgeapi.core.domain.model.config.JavaConfig;
@@ -33,7 +33,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SpecModelToJavaModelMapperTest {
+class SpecModelToJavaModelMapperIntergrationTest {
 
     private final FingerprintGeneratorPort fingerprintPort = mock(FingerprintGeneratorPort.class);
     private final StringInflectorPort inflector = mock(StringInflectorPort.class);
@@ -43,15 +43,15 @@ class SpecModelToJavaModelMapperTest {
     void setUp() {
         setupInflector();
         setupFingerprinter();
-        var annotationsSupplier = new AnnotationsSupplier();
+        var annotationsSupplier = new JavaAnnotationsSupplier();
         var javaFieldSorter = new JavaFieldSorter();
-        var classNameCreator = new ClassNameCreator(inflector);
+        var classNameCreator = new JavaClassNameCreator(inflector);
         var javaEnumFactory = new JavaEnumFactory(annotationsSupplier);
-        List<TypeReferenceCreator> creators = new ArrayList<>();
-        var realFacade = new TypeReferenceCreatorFacade(creators);
+        List<JavaTypeReferenceCreator> creators = new ArrayList<>();
+        var realFacade = new JavaTypeReferenceCreatorFacade(creators);
         var javaClassFactory = new JavaClassFactory(realFacade, javaFieldSorter, annotationsSupplier);
         addTypeReferenceCreators(creators, javaEnumFactory, classNameCreator, realFacade, javaClassFactory);
-        var deduplicator = new ClassDeduplicator(fingerprintPort);
+        var deduplicator = new JavaClassDeduplicator(fingerprintPort);
         this.mapper = new SpecModelToJavaModelMapper(javaClassFactory, deduplicator);
     }
 
@@ -250,23 +250,23 @@ class SpecModelToJavaModelMapperTest {
     }
 
     private void addTypeReferenceCreators(
-            List<TypeReferenceCreator> strategies,
+            List<JavaTypeReferenceCreator> strategies,
             JavaEnumFactory javaEnumFactory,
-            ClassNameCreator classNameCreator,
-            TypeReferenceCreatorFacade realFacade,
+            JavaClassNameCreator classNameCreator,
+            JavaTypeReferenceCreatorFacade realFacade,
             JavaClassFactory javaClassFactory) {
-        strategies.add(new StringTypeReferenceCreator());
-        strategies.add(new BooleanTypeReferenceCreator());
-        strategies.add(new IntegerTypeReferenceCreator());
-        strategies.add(new DoubleTypeReferenceCreator());
-        strategies.add(new DecimalTypeReferenceCreator());
-        strategies.add(new DateTypeReferenceCreator());
-        strategies.add(new TimeTypeReferenceCreator());
-        strategies.add(new DateTimeTypeReferenceCreator());
-        strategies.add(new EnumTypeReferenceCreator(javaEnumFactory, classNameCreator));
-        strategies.add(new ListTypeReferenceCreator(realFacade));
-        strategies.add(new MapTypeReferenceCreator(realFacade));
-        strategies.add(new ObjectTypeReferenceCreator(javaClassFactory, classNameCreator));
+        strategies.add(new JavaStringTypeReferenceCreator());
+        strategies.add(new JavaBooleanTypeReferenceCreator());
+        strategies.add(new JavaIntegerTypeReferenceCreator());
+        strategies.add(new JavaDoubleTypeReferenceCreator());
+        strategies.add(new JavaDecimalTypeReferenceCreator());
+        strategies.add(new JavaDateTypeReferenceCreator());
+        strategies.add(new JavaTimeTypeReferenceCreator());
+        strategies.add(new JavaDateTimeTypeReferenceCreator());
+        strategies.add(new JavaEnumTypeReferenceCreator(javaEnumFactory, classNameCreator));
+        strategies.add(new JavaListTypeReferenceCreator(realFacade));
+        strategies.add(new JavaMapTypeReferenceCreator(realFacade));
+        strategies.add(new JavaObjectTypeReferenceCreator(javaClassFactory, classNameCreator));
     }
 
     private SpecProperty createProp(String name, SpecType type) {

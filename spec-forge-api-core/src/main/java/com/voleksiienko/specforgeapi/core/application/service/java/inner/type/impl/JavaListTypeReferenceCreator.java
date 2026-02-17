@@ -1,20 +1,20 @@
 package com.voleksiienko.specforgeapi.core.application.service.java.inner.type.impl;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.MappingContext;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreator;
-import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.TypeReferenceCreatorFacade;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaMappingContext;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreator;
+import com.voleksiienko.specforgeapi.core.application.service.java.inner.type.JavaTypeReferenceCreatorFacade;
 import com.voleksiienko.specforgeapi.core.domain.model.java.TypeReference;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.ListSpecType;
 import com.voleksiienko.specforgeapi.core.domain.model.spec.type.SpecType;
 import java.util.List;
 
 @Component
-public class ListTypeReferenceCreator implements TypeReferenceCreator {
+public class JavaListTypeReferenceCreator implements JavaTypeReferenceCreator {
 
-    private final TypeReferenceCreatorFacade facade;
+    private final JavaTypeReferenceCreatorFacade facade;
 
-    public ListTypeReferenceCreator(TypeReferenceCreatorFacade facade) {
+    public JavaListTypeReferenceCreator(JavaTypeReferenceCreatorFacade facade) {
         this.facade = facade;
     }
 
@@ -24,9 +24,9 @@ public class ListTypeReferenceCreator implements TypeReferenceCreator {
     }
 
     @Override
-    public TypeReference create(String specPropertyName, SpecType specType, MappingContext ctx) {
+    public TypeReference create(String specPropertyName, SpecType specType, JavaMappingContext ctx) {
         TypeReference valueRef = facade.create(
-                specPropertyName, ((ListSpecType) specType).getValueType(), new MappingContext(ctx, true, true));
+                specPropertyName, ((ListSpecType) specType).getValueType(), new JavaMappingContext(ctx, true, true));
         return TypeReference.builder()
                 .packageName("java.util")
                 .simpleName("List")
