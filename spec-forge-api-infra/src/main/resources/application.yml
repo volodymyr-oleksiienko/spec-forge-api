@@ -15,31 +15,31 @@ management:
       probability: 1.0
     export:
       otlp:
-        enabled: ${app.otel.enabled}
+        enabled: ${app.otel.enabled:false}
   logging:
     export:
       otlp:
-        enabled: ${app.otel.enabled}
+        enabled: ${app.otel.enabled:false}
   opentelemetry:
     logging:
       export:
         otlp:
-          endpoint: ${app.otel.endpoint}/v1/logs
+          endpoint: ${app.otel.endpoint:http://localhost:4318}/v1/logs
           headers:
-            Authorization: ${app.otel.auth.header.value}
+            Authorization: ${app.otel.auth.header.value:none}
     tracing:
       export:
         otlp:
-          endpoint: ${app.otel.endpoint}/v1/traces
+          endpoint: ${app.otel.endpoint:http://localhost:4318}/v1/traces
           headers:
-            Authorization: ${app.otel.auth.header.value}
+            Authorization: ${app.otel.auth.header.value:none}
   otlp:
     metrics:
       export:
-        enabled: ${app.otel.enabled}
-        url: ${app.otel.endpoint}/v1/metrics
+        enabled: ${app.otel.enabled:false}
+        url: ${app.otel.endpoint:http://localhost:4318}/v1/metrics
         headers:
-          Authorization: ${app.otel.auth.header.value}
+          Authorization: ${app.otel.auth.header.value:none}
 
 spring:
   application:
