@@ -10,6 +10,7 @@
 ![Maven](https://img.shields.io/badge/Maven-3.9+-6DB33F?style=for-the-badge&logo=apache-maven&logoColor=white)
 
 ![Architecture](https://img.shields.io/badge/Arch-Hexagonal-6DB33F?style=for-the-badge)
+![Methodology](https://img.shields.io/badge/Methodology-DDD-E91E63?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)
 
 **Spec-Forge API** is an engine designed to transform raw data sources like **JSON examples** and **JSON schemas** into
@@ -50,6 +51,19 @@ Once the application has started, the API will be available at:
 
 Application health check available at:
 > `http://localhost:8080/actuator/health`
+
+---
+
+## 🔐 Environment Configuration
+
+Before running the application, set the following environment variables to enable observability:
+
+| Variable                     | Description                                                | Example                            |
+|------------------------------|------------------------------------------------------------|------------------------------------|
+| `APP_OTEL_ENABLED`           | Toggle for enabling OTLP export                            | `true` / `false` (default)         |
+| `APP_OTEL_ENDPOINT`          | The base URL of your OTLP collector                        | `https://otlp-gateway.grafana.net` |
+| `APP_OTEL_AUTH_HEADER_VALUE` | Basic Auth or Bearer token for OTLP (Authorization header) | `Basic <base64_encoded_token>`     |
+| `APP_LOGGING_HTTP_ENABLED`   | Toggle for detailed HTTP Request/Response logs             | `true` / `false` (default)         |
 
 ## 📡 API Reference
 

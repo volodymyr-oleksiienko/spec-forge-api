@@ -35,6 +35,8 @@
         <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
         <sonar.organization>volodymyr-oleksiienko</sonar.organization>
 
+        <opentelemetry-logback-appender-1.0.version>2.25.0-alpha</opentelemetry-logback-appender-1.0.version>
+
         <json-schema-inferrer.version>0.2.1</json-schema-inferrer.version>
         <commons-validator.version>1.10.1</commons-validator.version>
         <json-schema-validator.version>3.0.0</json-schema-validator.version>
@@ -44,6 +46,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+                <version>${opentelemetry-logback-appender-1.0.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.github.saasquatch</groupId>
                 <artifactId>json-schema-inferrer</artifactId>

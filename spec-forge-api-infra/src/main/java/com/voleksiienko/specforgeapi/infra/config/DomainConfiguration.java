@@ -9,7 +9,7 @@ import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.TsTy
 import java.util.List;
 import org.springframework.context.annotation.*;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ComponentScan(
         basePackages = "com.voleksiienko.specforgeapi.core",
         includeFilters = {
