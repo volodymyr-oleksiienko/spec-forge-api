@@ -13,6 +13,7 @@ env:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       packages: write
@@ -65,11 +66,24 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: GITHUB_ACTOR, VERSION
+          envs: GITHUB_ACTOR,VERSION,APP_OTEL_ENABLED,APP_OTEL_ENDPOINT,APP_OTEL_AUTH_HEADER_VALUE,APP_LOGGING_HTTP_ENABLED
           script: |
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
             cd /opt/backend
-            echo "APP_VERSION=$VERSION" > .env
+            
+            cat <<EOF > .env
+            APP_VERSION=$VERSION
+            APP_OTEL_ENABLED=$APP_OTEL_ENABLED
+            APP_OTEL_ENDPOINT=$APP_OTEL_ENDPOINT
+            APP_OTEL_AUTH_HEADER_VALUE=$APP_OTEL_AUTH_HEADER_VALUE
+            APP_LOGGING_HTTP_ENABLED=$APP_LOGGING_HTTP_ENABLED
+            EOF
+            
             docker compose pull
             docker compose up -d
             docker system prune -a -f
+        env:
+          APP_OTEL_ENABLED: ${{ vars.APP_OTEL_ENABLED }}
+          APP_OTEL_ENDPOINT: ${{ vars.APP_OTEL_ENDPOINT }}
+          APP_OTEL_AUTH_HEADER_VALUE: ${{ secrets.APP_OTEL_AUTH_HEADER_VALUE }}
+          APP_LOGGING_HTTP_ENABLED: ${{ vars.APP_LOGGING_HTTP_ENABLED }}

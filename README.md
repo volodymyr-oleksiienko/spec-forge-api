@@ -10,17 +10,12 @@
 ![Maven](https://img.shields.io/badge/Maven-3.9+-6DB33F?style=for-the-badge&logo=apache-maven&logoColor=white)
 
 ![Architecture](https://img.shields.io/badge/Arch-Hexagonal-6DB33F?style=for-the-badge)
+![Methodology](https://img.shields.io/badge/Methodology-DDD-E91E63?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)
 
 **Spec-Forge API** is an engine designed to transform raw data sources like **JSON examples** and **JSON schemas** into
 a unified **Intermediate Representation (IR)**. This IR is then used to generate clean, production-ready **Java** and
 **TypeScript** codebases.
-
----
-
-## 🏗️ Current Status
-
-This project is currently under **active development**.
 
 ---
 
@@ -56,6 +51,199 @@ Once the application has started, the API will be available at:
 
 Application health check available at:
 > `http://localhost:8080/actuator/health`
+
+---
+
+## 🔐 Environment Configuration
+
+Before running the application, set the following environment variables to enable observability:
+
+| Variable                     | Description                                                | Example                            |
+|------------------------------|------------------------------------------------------------|------------------------------------|
+| `APP_OTEL_ENABLED`           | Toggle for enabling OTLP export                            | `true` / `false` (default)         |
+| `APP_OTEL_ENDPOINT`          | The base URL of your OTLP collector                        | `https://otlp-gateway.grafana.net` |
+| `APP_OTEL_AUTH_HEADER_VALUE` | Basic Auth or Bearer token for OTLP (Authorization header) | `Basic <base64_encoded_token>`     |
+| `APP_LOGGING_HTTP_ENABLED`   | Toggle for detailed HTTP Request/Response logs             | `true` / `false` (default)         |
+
+## 📡 API Reference
+
+### 1. Generate Artifacts from JSON Schema
+
+**Endpoint:** `POST /artifacts/from-json-schema`  
+**Content-Type:** `application/json`
+
+**Request Body Sample:**
+
+```json
+{
+  "content": "{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}}",
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
+}
+```
+
+### 2. Generate Artifacts from JSON Sample
+
+**Endpoint:** `POST /artifacts/from-json-sample`  
+**Content-Type:** `application/json`
+
+**Request Body Sample:**
+
+```json
+{
+  "content": "{\"id\": 123}",
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
+}
+```
+
+### 3. Generate Artifacts from Spec Model
+
+**Endpoint:** `POST /artifacts/from-spec-model`  
+**Content-Type:** `application/json`
+
+**Request Body Sample (generationConfig is optional):**
+
+```json
+{
+  "specModel": {
+    "wrapperType": "OBJECT",
+    "properties": [
+      {
+        "name": "id",
+        "type": {
+          "type": "INTEGER"
+        },
+        "required": false
+      }
+    ]
+  },
+  "generationConfig": {
+    "language": "TYPESCRIPT",
+    "base": {
+      "naming": {
+        "className": "PersonDto"
+      },
+      "fields": {
+        "sort": "ALPHABETICAL"
+      }
+    },
+    "structure": {
+      "style": "INTERFACE"
+    },
+    "enums": {
+      "style": "UNION_STRING"
+    }
+  }
+}
+```
+
+### Unified Response (Success 200 OK)
+
+Returns the standardized SpecModel and any warnings.
+
+```json
+{
+  "specModel": {
+    "wrapperType": "OBJECT",
+    "properties": [
+      {
+        "name": "id",
+        "type": {
+          "type": "INTEGER"
+        },
+        "required": false
+      }
+    ]
+  },
+  "jsonSample": "{\"id\": \"1\"}",
+  "jsonSchema": "{\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"type\": \"object\", \"properties\": { \"id\": { \"type\": \"string\" } } }",
+  "code": "export interface PersonDto {\n  id?: number;\n}\n\n"
+}
+```
+
+---
+
+## 🛠 How it Works
+
+```mermaid
+graph LR
+    subgraph "Inputs formats"
+        subgraph "Prepared"
+            D[Spec Model]
+        end
+
+        subgraph "Raw"
+            A[JSON Sample]
+            B[JSON Schema]
+        end
+    end
+
+    subgraph "The Forge"
+        A -->|one of| P
+        B -->|one of| P
+        P[Parser]
+        D -->|one of| G
+        P -->|Spec Model| G
+        G[Generator]
+    end
+
+    subgraph "Output formats"
+        J[Java Records / POJOs]
+        T[TypeScript Interfaces]
+        IR[Spec Model]
+        JE[JSON Sample]
+        JS[JSON Schema]
+    end
+
+    G -->|one of| J
+    G -->|one of| T
+    G --> JE
+    G --> JS
+    G --> IR
+
+```
+
+---
+
+## 🔄 Conversion Matrix
+
+| Source Format                            | Ingest (to SpecModel) | Generate (from SpecModel) |
+|:-----------------------------------------|:---------------------:|:-------------------------:|
+| **JSON Example**                         |           ✅           |             ✅             |
+| **JSON Schema**                          |           ✅           |             ✅             |
+| **Java (Records/POJOs)**                 |           ❌           |             ✅             |
+| **TypeScript (Interfaces\Type Aliases)** |           ❌           |             ✅             |
 
 ---
 

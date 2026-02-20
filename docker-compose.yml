@@ -15,6 +15,10 @@ services:
       - SERVER_TOMCAT_THREADS_MIN_SPARE=5
       - SERVER_TOMCAT_CONNECTION_TIMEOUT=20000
       - SERVER_SHUTDOWN=graceful
+      - APP_OTEL_ENABLED=${APP_OTEL_ENABLED}
+      - APP_OTEL_ENDPOINT=${APP_OTEL_ENDPOINT}
+      - APP_OTEL_AUTH_HEADER_VALUE=${APP_OTEL_AUTH_HEADER_VALUE}
+      - APP_LOGGING_HTTP_ENABLED=${APP_LOGGING_HTTP_ENABLED}
     healthcheck:
       test: [ "CMD", "/workspace/health-check" ]
       interval: 30s

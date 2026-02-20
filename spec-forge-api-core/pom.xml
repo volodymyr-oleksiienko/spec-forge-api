@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.v-oleksiienko</groupId>
         <artifactId>spec-forge-api</artifactId>
-        <version>0.1.5</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>spec-forge-api-core</artifactId>
@@ -22,8 +22,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
