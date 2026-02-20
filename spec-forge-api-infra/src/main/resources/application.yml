@@ -7,7 +7,42 @@ management:
     health:
       probes:
         enabled: true
+  observations:
+    annotations:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+    export:
+      otlp:
+        enabled: ${app.otel.enabled}
+  logging:
+    export:
+      otlp:
+        enabled: ${app.otel.enabled}
+  opentelemetry:
+    logging:
+      export:
+        otlp:
+          endpoint: ${app.otel.endpoint}/v1/logs
+          headers:
+            Authorization: ${app.otel.auth.header.value}
+    tracing:
+      export:
+        otlp:
+          endpoint: ${app.otel.endpoint}/v1/traces
+          headers:
+            Authorization: ${app.otel.auth.header.value}
+  otlp:
+    metrics:
+      export:
+        enabled: ${app.otel.enabled}
+        url: ${app.otel.endpoint}/v1/metrics
+        headers:
+          Authorization: ${app.otel.auth.header.value}
 
 spring:
+  application:
+    name: spec-forge-api
   jackson:
     default-property-inclusion: non_empty
