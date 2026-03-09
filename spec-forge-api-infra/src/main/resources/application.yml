@@ -46,3 +46,5 @@ spring:
     name: spec-forge-api
   jackson:
     default-property-inclusion: non_empty
+    deserialization:
+      accept_empty_string_as_null_object: true
