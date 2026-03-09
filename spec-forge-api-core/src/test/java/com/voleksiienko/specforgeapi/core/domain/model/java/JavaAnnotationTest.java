@@ -1,13 +1,13 @@
 package com.voleksiienko.specforgeapi.core.domain.model.java;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.voleksiienko.specforgeapi.core.domain.exception.JavaModelValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JavaAnnotationTest {
 
@@ -32,16 +32,5 @@ class JavaAnnotationTest {
         assertThatThrownBy(builder::build)
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("Annotation simpleName must be not blank");
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = {"", "   "})
-    void shouldThrowWhenPackageNameIsInvalid(String invalidPackage) {
-        var builder = JavaAnnotation.builder().simpleName("ValidName").packageName(invalidPackage);
-
-        assertThatThrownBy(builder::build)
-                .isInstanceOf(JavaModelValidationException.class)
-                .hasMessage("Annotation packageName must be not blank");
     }
 }

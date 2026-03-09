@@ -14,6 +14,8 @@ public class JavaAnnotationsSupplier {
     private static final String JAKARTA_VALIDATION_CONSTRAINTS_PACKAGE = "jakarta.validation.constraints";
 
     static {
+        ANNOTATION_SUPPLIERS.put("Deprecated", () -> JavaAnnotation.builder().simpleName("Deprecated"));
+
         ANNOTATION_SUPPLIERS.put("JsonProperty", () -> JavaAnnotation.builder()
                 .packageName("com.fasterxml.jackson.annotation")
                 .simpleName("JsonProperty"));
@@ -42,6 +44,9 @@ public class JavaAnnotationsSupplier {
         ANNOTATION_SUPPLIERS.put(
                 "NoArgsConstructor",
                 () -> JavaAnnotation.builder().packageName(LOMBOK_PACKAGE).simpleName("NoArgsConstructor"));
+        ANNOTATION_SUPPLIERS.put(
+                "RequiredArgsConstructor",
+                () -> JavaAnnotation.builder().packageName(LOMBOK_PACKAGE).simpleName("RequiredArgsConstructor"));
         ANNOTATION_SUPPLIERS.put(
                 "AllArgsConstructor",
                 () -> JavaAnnotation.builder().packageName(LOMBOK_PACKAGE).simpleName("AllArgsConstructor"));

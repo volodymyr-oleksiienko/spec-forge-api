@@ -13,10 +13,15 @@ public class TsDeclarationFactory {
 
     private final TsTypeReferenceCreatorFacade typeFacade;
     private final TsFieldSorter tsFieldSorter;
+    private final TypeScriptFieldNameSanitizer typeScriptFieldNameSanitizer;
 
-    public TsDeclarationFactory(TsTypeReferenceCreatorFacade typeFacade, TsFieldSorter tsFieldSorter) {
+    public TsDeclarationFactory(
+            TsTypeReferenceCreatorFacade typeFacade,
+            TsFieldSorter tsFieldSorter,
+            TypeScriptFieldNameSanitizer typeScriptFieldNameSanitizer) {
         this.typeFacade = typeFacade;
         this.tsFieldSorter = tsFieldSorter;
+        this.typeScriptFieldNameSanitizer = typeScriptFieldNameSanitizer;
     }
 
     public TsDeclaration createObject(String name, List<SpecProperty> properties, TsMappingContext ctx) {
@@ -31,8 +36,12 @@ public class TsDeclarationFactory {
 
     private TsField mapField(SpecProperty property, TsMappingContext ctx) {
         TsTypeReference typeRef = typeFacade.create(property.getName(), property.getType(), ctx);
+        String fieldName = typeScriptFieldNameSanitizer.sanitize(property.getName());
         return TsField.builder()
-                .name(property.getName())
+                .name(
+                        !property.getName().equals(fieldName)
+                                ? "\"%s\"".formatted(property.getName())
+                                : property.getName())
                 .type(typeRef)
                 .optional(!property.isRequired())
                 .build();
