@@ -11,6 +11,7 @@ import com.voleksiienko.specforgeapi.core.application.port.in.artifact.result.Ar
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaModelToJavaCodePort;
 import com.voleksiienko.specforgeapi.core.application.port.out.json.*;
 import com.voleksiienko.specforgeapi.core.application.port.out.ts.TsModelToTsCodePort;
+import com.voleksiienko.specforgeapi.core.application.port.out.util.LoggerPort;
 import com.voleksiienko.specforgeapi.core.application.service.java.SpecModelToJavaModelMapper;
 import com.voleksiienko.specforgeapi.core.application.service.ts.SpecModelToTsModelMapper;
 import com.voleksiienko.specforgeapi.core.domain.model.config.GenerationConfig;
@@ -34,6 +35,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
     private final JavaModelToJavaCodePort javaCodeMapper;
     private final SpecModelToTsModelMapper tsModelMapper;
     private final TsModelToTsCodePort tsCodeMapper;
+    private final LoggerPort logger;
 
     public GenerateArtifactsUseCaseImpl(
             JsonSchemaValidatorPort jsonSchemaValidator,
@@ -44,7 +46,8 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
             SpecModelToJavaModelMapper javaModelMapper,
             JavaModelToJavaCodePort javaCodeMapper,
             SpecModelToTsModelMapper tsModelMapper,
-            TsModelToTsCodePort tsCodeMapper) {
+            TsModelToTsCodePort tsCodeMapper,
+            LoggerPort logger) {
         this.jsonSchemaValidator = jsonSchemaValidator;
         this.schemaParser = schemaParser;
         this.sampleMapper = sampleMapper;
@@ -54,6 +57,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
         this.javaCodeMapper = javaCodeMapper;
         this.tsModelMapper = tsModelMapper;
         this.tsCodeMapper = tsCodeMapper;
+        this.logger = logger;
     }
 
     @Override
@@ -90,9 +94,10 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
                 case null -> null;
             };
         } catch (Exception e) {
+            logger.logError(e, e.getMessage());
             warnings.add(new Warning(
-                    "Code generation failed (%s used)"
-                            .formatted(config.getClass().getName()),
+                    "Code generation failed: [%s] (%s used)"
+                            .formatted(e.getMessage(), config.getClass().getSimpleName()),
                     CODE_GENERATION_FAILED));
             return null;
         }
