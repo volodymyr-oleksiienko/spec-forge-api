@@ -96,10 +96,13 @@ public final class SpecProperty {
 
         public SpecProperty build() {
             if (Asserts.isBlank(name)) {
-                throw new SpecModelValidationException("SpecNode must have name");
+                throw new SpecModelValidationException("SpecProperty must have name");
+            }
+            if (name.contains(" ")) {
+                throw new SpecModelValidationException("SpecProperty name [%s] must have no spaces".formatted(name));
             }
             if (Objects.isNull(type)) {
-                throw new SpecModelValidationException("SpecNode must have type");
+                throw new SpecModelValidationException("SpecProperty must have type");
             }
             return new SpecProperty(this);
         }

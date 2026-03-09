@@ -5,6 +5,7 @@ import static com.voleksiienko.specforgeapi.core.common.Asserts.*;
 import com.palantir.javapoet.*;
 import com.voleksiienko.specforgeapi.core.application.exception.ConversionException;
 import com.voleksiienko.specforgeapi.core.application.port.out.java.JavaModelToJavaCodePort;
+import com.voleksiienko.specforgeapi.core.common.Asserts;
 import com.voleksiienko.specforgeapi.core.domain.model.java.*;
 import com.voleksiienko.specforgeapi.infra.adapter.in.web.dto.response.ApiErrorCode;
 import java.util.Collections;
@@ -153,7 +154,9 @@ public class JavaModelToJavaCodeAdapter implements JavaModelToJavaCodePort {
     }
 
     private AnnotationSpec resolveAnnotation(JavaAnnotation annotation) {
-        ClassName annClass = ClassName.get(annotation.getPackageName(), annotation.getSimpleName());
+        ClassName annClass = Asserts.isBlank(annotation.getPackageName())
+                ? ClassName.bestGuess(annotation.getSimpleName())
+                : ClassName.get(annotation.getPackageName(), annotation.getSimpleName());
         AnnotationSpec.Builder builder = AnnotationSpec.builder(annClass);
         if (Objects.nonNull(annotation.getAttributes())) {
             annotation.getAttributes().forEach((k, v) -> builder.addMember(k, "$L", v));

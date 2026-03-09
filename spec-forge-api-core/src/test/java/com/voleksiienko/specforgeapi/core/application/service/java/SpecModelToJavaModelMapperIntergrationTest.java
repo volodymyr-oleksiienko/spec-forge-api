@@ -49,7 +49,8 @@ class SpecModelToJavaModelMapperIntergrationTest {
         var javaEnumFactory = new JavaEnumFactory(annotationsSupplier);
         List<JavaTypeReferenceCreator> creators = new ArrayList<>();
         var realFacade = new JavaTypeReferenceCreatorFacade(creators);
-        var javaClassFactory = new JavaClassFactory(realFacade, javaFieldSorter, annotationsSupplier);
+        var javaClassFactory =
+                new JavaClassFactory(realFacade, javaFieldSorter, annotationsSupplier, new JavaFieldNameSanitizer());
         addTypeReferenceCreators(creators, javaEnumFactory, classNameCreator, realFacade, javaClassFactory);
         var deduplicator = new JavaClassDeduplicator(fingerprintPort);
         this.mapper = new SpecModelToJavaModelMapper(javaClassFactory, deduplicator);

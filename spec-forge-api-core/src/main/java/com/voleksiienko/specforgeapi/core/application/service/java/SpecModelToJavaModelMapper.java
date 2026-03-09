@@ -33,10 +33,7 @@ public class SpecModelToJavaModelMapper {
                 JavaConfig.Structure.Type.RECORD == config.structure().type();
         return isRecord
                 ? JavaClass.createRecord(
-                        mainClass.getName(),
-                        mainClass.getAnnotations(),
-                        mainClass.getFields(),
-                        mainClass.getNestedClasses())
+                        mainClass.getName(), mainClass.getAnnotations(), mainClass.getFields(), distinctNested)
                 : JavaClass.createClass(
                         mainClass.getName(), mainClass.getAnnotations(), mainClass.getFields(), distinctNested);
     }

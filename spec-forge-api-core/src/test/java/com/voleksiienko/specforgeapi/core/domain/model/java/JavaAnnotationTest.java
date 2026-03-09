@@ -33,15 +33,4 @@ class JavaAnnotationTest {
                 .isInstanceOf(JavaModelValidationException.class)
                 .hasMessage("Annotation simpleName must be not blank");
     }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = {"", "   "})
-    void shouldThrowWhenPackageNameIsInvalid(String invalidPackage) {
-        var builder = JavaAnnotation.builder().simpleName("ValidName").packageName(invalidPackage);
-
-        assertThatThrownBy(builder::build)
-                .isInstanceOf(JavaModelValidationException.class)
-                .hasMessage("Annotation packageName must be not blank");
-    }
 }

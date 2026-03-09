@@ -51,6 +51,7 @@ public record JavaConfig(
 
         public enum JsonPropertyMode {
             ALWAYS,
+            IF_NAME_CHANGED,
             NEVER
         }
     }
