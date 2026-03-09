@@ -25,6 +25,7 @@ public record JavaConfigDto(
     public record SerializationDto(@NotNull JsonPropertyModeDto jsonPropertyMode) {
         public enum JsonPropertyModeDto {
             ALWAYS,
+            IF_NAME_CHANGED,
             NEVER
         }
     }

@@ -57,9 +57,6 @@ public final class JavaAnnotation {
             if (Asserts.isBlank(simpleName)) {
                 throw new JavaModelValidationException("Annotation simpleName must be not blank");
             }
-            if (Asserts.isBlank(packageName)) {
-                throw new JavaModelValidationException("Annotation packageName must be not blank");
-            }
             if (Asserts.isNotEmpty(attributes)) {
                 this.attributes = Map.copyOf(this.attributes);
             }

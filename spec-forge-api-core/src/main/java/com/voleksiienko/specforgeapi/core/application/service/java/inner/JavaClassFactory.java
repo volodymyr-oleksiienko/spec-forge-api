@@ -20,14 +20,17 @@ public class JavaClassFactory {
     private final JavaTypeReferenceCreatorFacade javaTypeReferenceCreatorFacade;
     private final JavaFieldSorter javaFieldSorter;
     private final JavaAnnotationsSupplier javaAnnotationsSupplier;
+    private final JavaFieldNameSanitizer javaFieldNameSanitizer;
 
     public JavaClassFactory(
             JavaTypeReferenceCreatorFacade javaTypeReferenceCreatorFacade,
             JavaFieldSorter javaFieldSorter,
-            JavaAnnotationsSupplier javaAnnotationsSupplier) {
+            JavaAnnotationsSupplier javaAnnotationsSupplier,
+            JavaFieldNameSanitizer javaFieldNameSanitizer) {
         this.javaTypeReferenceCreatorFacade = javaTypeReferenceCreatorFacade;
         this.javaFieldSorter = javaFieldSorter;
         this.javaAnnotationsSupplier = javaAnnotationsSupplier;
+        this.javaFieldNameSanitizer = javaFieldNameSanitizer;
     }
 
     public JavaClass mapToClass(String name, List<SpecProperty> specProperties, JavaMappingContext ctx) {
@@ -47,9 +50,10 @@ public class JavaClassFactory {
     }
 
     private JavaField convertPropertyToField(SpecProperty property, JavaMappingContext ctx) {
+        String fieldName = javaFieldNameSanitizer.sanitize(property.getName());
         return JavaField.builder()
-                .name(property.getName())
-                .annotations(buildFieldAnnotations(property, ctx.config()))
+                .name(fieldName)
+                .annotations(buildFieldAnnotations(fieldName, property, ctx.config()))
                 .type(javaTypeReferenceCreatorFacade.create(
                         property.getName(),
                         property.getType(),
@@ -57,8 +61,12 @@ public class JavaClassFactory {
                 .build();
     }
 
-    private List<JavaAnnotation> buildFieldAnnotations(SpecProperty property, JavaConfig config) {
+    private List<JavaAnnotation> buildFieldAnnotations(String fieldName, SpecProperty property, JavaConfig config) {
         List<JavaAnnotation> annotations = new ArrayList<>();
+        if (property.isDeprecated()) {
+            annotations.add(
+                    javaAnnotationsSupplier.getAnnotationBuilder("Deprecated").build());
+        }
         if (config.validation().enabled()) {
             if (property.isRequired()) {
                 if (property.getType() instanceof ListSpecType) {
@@ -83,12 +91,19 @@ public class JavaClassFactory {
             }
         }
         if (JavaConfig.Serialization.JsonPropertyMode.ALWAYS
-                == config.serialization().jsonPropertyMode()) {
+                        == config.serialization().jsonPropertyMode()
+                || isNameWasChangedAndFeatureEnabled(fieldName, property, config)) {
             JavaAnnotation.Builder jsonProp = javaAnnotationsSupplier.getAnnotationBuilder("JsonProperty");
             jsonProp.attributes(Map.of("value", "\"%s\"".formatted(property.getName())));
             annotations.add(jsonProp.build());
         }
         return annotations;
+    }
+
+    private boolean isNameWasChangedAndFeatureEnabled(String fieldName, SpecProperty property, JavaConfig config) {
+        return JavaConfig.Serialization.JsonPropertyMode.IF_NAME_CHANGED
+                        == config.serialization().jsonPropertyMode()
+                && !property.getName().equals(fieldName);
     }
 
     private boolean isMustUsePrimitiveWrappers(SpecProperty property, JavaMappingContext ctx) {

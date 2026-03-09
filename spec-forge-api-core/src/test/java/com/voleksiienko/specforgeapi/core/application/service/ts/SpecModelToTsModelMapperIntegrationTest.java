@@ -10,6 +10,7 @@ import com.voleksiienko.specforgeapi.core.application.port.out.util.StringInflec
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.TsDeclarationDeduplicator;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.TsDeclarationFactory;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.TsFieldSorter;
+import com.voleksiienko.specforgeapi.core.application.service.ts.inner.TypeScriptFieldNameSanitizer;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.TsTypeReferenceCreator;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.TsTypeReferenceCreatorFacade;
 import com.voleksiienko.specforgeapi.core.application.service.ts.inner.type.impl.*;
@@ -40,7 +41,8 @@ class SpecModelToTsModelMapperIntegrationTest {
         ArrayList<TsTypeReferenceCreator> creators = new ArrayList<>();
         TsTypeReferenceCreatorFacade facade = new TsTypeReferenceCreatorFacade(creators);
         TsFieldSorter tsFieldSorter = new TsFieldSorter();
-        TsDeclarationFactory declarationFactory = new TsDeclarationFactory(facade, tsFieldSorter);
+        TsDeclarationFactory declarationFactory =
+                new TsDeclarationFactory(facade, tsFieldSorter, new TypeScriptFieldNameSanitizer());
         creators.add(new TsPrimitiveTypeReferenceCreator());
         creators.add(new TsDateTypeReferenceCreator());
         creators.add(new TsEnumTypeReferenceCreator(inflector));

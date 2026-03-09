@@ -54,7 +54,7 @@ class SpecPropertyTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
-                .hasMessage("SpecNode must have name");
+                .hasMessage("SpecProperty must have name");
     }
 
     @Test
@@ -63,7 +63,7 @@ class SpecPropertyTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(SpecModelValidationException.class)
-                .hasMessage("SpecNode must have type");
+                .hasMessage("SpecProperty must have type");
     }
 
     @Test
