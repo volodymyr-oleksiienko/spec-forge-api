@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.List;
@@ -69,7 +68,7 @@ public record SpecModelDto(
 
         record DateTimeTypeDto(String format, List<String> examples) implements SpecTypeDto {}
 
-        record ObjectTypeDto(@Valid List<SpecPropertyDto> children) implements SpecTypeDto {}
+        record ObjectTypeDto(@Valid @NotEmpty List<SpecPropertyDto> children) implements SpecTypeDto {}
 
         record ListTypeDto(
                 @Positive Integer minItems,
@@ -82,7 +81,7 @@ public record SpecModelDto(
     }
 
     public record SpecPropertyDto(
-            @NotNull @Pattern(regexp = "^\\w+$") String name,
+            @NotNull String name,
             @Valid @NotNull SpecTypeDto type,
             @NotNull Boolean required,
             String description,
