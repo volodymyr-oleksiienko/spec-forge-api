@@ -1,11 +1,14 @@
 package com.voleksiienko.specforgeapi.core.application.service.java.inner;
 
 import com.voleksiienko.specforgeapi.core.application.annotation.Component;
+import com.voleksiienko.specforgeapi.core.common.Asserts;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @Component
 public class JavaFieldNameSanitizer {
 
+    private static final Pattern WORDS_REGEX_PATTERN = Pattern.compile("[^a-zA-Z0-9]+|(?<=[a-z])(?=[A-Z])");
     private static final Set<String> KEYWORDS = Set.of(
             "abstract",
             "assert",
@@ -87,5 +90,27 @@ public class JavaFieldNameSanitizer {
         String result = sb.toString();
 
         return KEYWORDS.contains(result) ? "%sField".formatted(result) : result;
+    }
+
+    public String toCamelCase(String input) {
+        String[] words = WORDS_REGEX_PATTERN.split(input);
+
+        StringBuilder result = new StringBuilder();
+
+        for (String word : words) {
+            if (Asserts.isBlank(word)) {
+                continue;
+            }
+            if (result.isEmpty()) {
+                result.append(word.toLowerCase());
+            } else {
+                result.append(Character.toUpperCase(word.charAt(0)));
+                if (word.length() > 1) {
+                    result.append(word.substring(1).toLowerCase());
+                }
+            }
+        }
+
+        return result.toString();
     }
 }

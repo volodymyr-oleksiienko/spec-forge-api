@@ -7,6 +7,7 @@ services:
     networks:
       - shared_network
     environment:
+      - SPRING_PROFILES_ACTIVE=prod
       - THC_PATH=/actuator/health/liveness
       - THC_PORT=8080
       - BPL_JVM_THREAD_COUNT=50

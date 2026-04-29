@@ -48,3 +48,23 @@ spring:
     default-property-inclusion: non_empty
     deserialization:
       accept_empty_string_as_null_object: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+app:
+  cors:
+    allowed-origins: "http://localhost:*,https://v-oleksiienko-dev.xyz,https://*.atlassian.net,https://*.cdn.prod.atlassian-dev.net,https://*.atlassian-forge.com"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+app:
+  cors:
+    allowed-origins: "https://v-oleksiienko.xyz,https://*.atlassian.net,https://*.cdn.prod.atlassian-dev.net,https://*.atlassian-forge.com"
