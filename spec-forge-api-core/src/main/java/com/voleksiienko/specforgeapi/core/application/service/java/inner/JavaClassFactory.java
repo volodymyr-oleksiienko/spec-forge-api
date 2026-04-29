@@ -50,7 +50,7 @@ public class JavaClassFactory {
     }
 
     private JavaField convertPropertyToField(SpecProperty property, JavaMappingContext ctx) {
-        String fieldName = javaFieldNameSanitizer.sanitize(property.getName());
+        String fieldName = javaFieldNameSanitizer.sanitize(javaFieldNameSanitizer.toCamelCase(property.getName()));
         return JavaField.builder()
                 .name(fieldName)
                 .annotations(buildFieldAnnotations(fieldName, property, ctx.config()))

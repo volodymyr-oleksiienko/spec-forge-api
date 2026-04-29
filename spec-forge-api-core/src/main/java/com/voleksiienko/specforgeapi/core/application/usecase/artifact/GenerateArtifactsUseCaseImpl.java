@@ -94,7 +94,7 @@ public class GenerateArtifactsUseCaseImpl implements GenerateArtifactsUseCase {
                 case null -> null;
             };
         } catch (Exception e) {
-            logger.logError(e, e.getMessage());
+            logger.logError(e, "Code generation failed");
             warnings.add(new Warning(
                     "Code generation failed: [%s] (%s used)"
                             .formatted(e.getMessage(), config.getClass().getSimpleName()),
