@@ -66,7 +66,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: GITHUB_ACTOR,VERSION,APP_OTEL_ENABLED,APP_OTEL_ENDPOINT,APP_OTEL_AUTH_HEADER_VALUE,APP_LOGGING_HTTP_ENABLED
+          envs: GITHUB_ACTOR,VERSION,APP_OTEL_ENABLED,APP_OTEL_ENDPOINT,APP_OTEL_AUTH_HEADER_VALUE
           script: |
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
             cd /opt/backend
@@ -76,7 +76,7 @@ jobs:
             APP_OTEL_ENABLED=$APP_OTEL_ENABLED
             APP_OTEL_ENDPOINT=$APP_OTEL_ENDPOINT
             APP_OTEL_AUTH_HEADER_VALUE=$APP_OTEL_AUTH_HEADER_VALUE
-            APP_LOGGING_HTTP_ENABLED=$APP_LOGGING_HTTP_ENABLED
+            APP_LOGGING_HTTP_ENABLED=false
             EOF
             
             docker compose pull
@@ -86,4 +86,3 @@ jobs:
           APP_OTEL_ENABLED: ${{ vars.APP_OTEL_ENABLED }}
           APP_OTEL_ENDPOINT: ${{ vars.APP_OTEL_ENDPOINT }}
           APP_OTEL_AUTH_HEADER_VALUE: ${{ secrets.APP_OTEL_AUTH_HEADER_VALUE }}
-          APP_LOGGING_HTTP_ENABLED: ${{ vars.APP_LOGGING_HTTP_ENABLED }}
